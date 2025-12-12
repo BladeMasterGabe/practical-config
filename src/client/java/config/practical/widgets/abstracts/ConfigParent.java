@@ -1,6 +1,6 @@
 package config.practical.widgets.abstracts;
 
-import config.practical.screenwidgets.ConfigSection;
+import config.practical.widgets.ConfigSection;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.ParentElement;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;

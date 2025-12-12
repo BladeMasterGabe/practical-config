@@ -1,11 +1,10 @@
-package config.practical.screenwidgets;
+package config.practical;
 
-import config.practical.ConfigurableScreen;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 
-public class ConfigSearch extends TextFieldWidget {
+class ConfigSearch extends TextFieldWidget {
 
     public static final int WIDTH = 150;
     public static final int HEIGHT = 30;

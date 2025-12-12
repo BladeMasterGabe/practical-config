@@ -66,7 +66,7 @@ public class HUDComponent implements HudElement {
         this.renderSupplier = renderSupplier;
         this.editSupplier = editSupplier;
 
-        HudElementRegistry.addLast(Identifier.of(Practicalconfig.MOD_ID,  "compoonent-" + componentCount), this);
+        HudElementRegistry.addLast(Identifier.of(Practicalconfig.MOD_ID,  "component-" + componentCount), this);
         componentCount++;
         ComponentEditScreen.addComponent(this);
     }
@@ -176,7 +176,7 @@ public class HUDComponent implements HudElement {
 
     @Override
     public void render(DrawContext context, RenderTickCounter tickCounter) {
-        if (!conditionSupplier.shouldRender()) return;
+        if (!editSupplier.shouldBeEditable() || !conditionSupplier.shouldRender()) return;
         Matrix3x2fStack stack = context.getMatrices();
         stack.pushMatrix();
         stack.scale(scale, scale);

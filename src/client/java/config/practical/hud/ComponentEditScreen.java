@@ -1,26 +1,26 @@
 package config.practical.hud;
 
+import config.practical.utilities.Constants;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.client.util.Window;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 
 public class ComponentEditScreen extends Screen {
 
+    private static final Identifier CROSSHAIR = Identifier.of(Constants.NAMESPACE, "crosshair");
+
     private static final Text TITLE = Text.literal("");
-    private static final Text INFO_SCALE_TEXT = Text.literal("Use the mouse wheel to increase or decrease the scale");
-    private static final Text INFO_RESET_TEXT = Text.literal("Press r to reset the selected component");
 
-    private static final int RESET_WIDTH = 100;
-    private static final int WIDGET_HEIGHT = 20;
-    private static final int WIDGET_MARGIN = 4;
-
+    private static final int CROSSHAIR_SIZE = 4;
     private static final float SCALE_FACTOR = 0.02f;
+    private static final String[] INFO = {"Press r to reset the selected component", "Use the mouse wheel to increase or decrease the scale", "Press r+ctrl+shift to reset ALL currently editable components"};
 
     private static final ArrayList<HUDComponent> ALL_COMPONENTS = new ArrayList<>();
 
@@ -50,28 +50,6 @@ public class ComponentEditScreen extends Screen {
 
     @Override
     protected void init() {
-
-        assert this.client != null;
-        Window window = this.client.getWindow();
-        int windowWidth = window.getScaledWidth();
-        int windowHeight = window.getScaledHeight();
-
-
-        ButtonWidget reset = ButtonWidget.builder(Text.literal("Reset All"),
-                        (button -> components.forEach(HUDComponent::reset))
-                ).position((windowWidth - RESET_WIDTH) / 2, (windowHeight - WIDGET_HEIGHT) / 2)
-                .size(RESET_WIDTH, WIDGET_HEIGHT)
-                .build();
-
-        assert this.client != null;
-        TextWidget infoScale = new TextWidget(INFO_SCALE_TEXT, this.client.textRenderer);
-        infoScale.setPosition((windowWidth - infoScale.getWidth()) / 2, (windowHeight - WIDGET_HEIGHT) / 2 + WIDGET_HEIGHT + WIDGET_MARGIN);
-        TextWidget infoReset = new TextWidget(INFO_RESET_TEXT, this.client.textRenderer);
-        infoReset.setPosition((windowWidth - infoReset.getWidth()) / 2, (windowHeight - WIDGET_HEIGHT) / 2 + 2 * (WIDGET_HEIGHT + WIDGET_MARGIN));
-
-        addDrawableChild(reset);
-        addDrawableChild(infoScale);
-        addDrawableChild(infoReset);
     }
 
     @Override
@@ -118,6 +96,15 @@ public class ComponentEditScreen extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        boolean ctrlIsPressed = (modifiers & GLFW.GLFW_MOD_CONTROL) != 0;
+        boolean shiftIsPressed = (modifiers & GLFW.GLFW_MOD_SHIFT) != 0;
+
+        if (keyCode == GLFW.GLFW_KEY_R  && ctrlIsPressed && shiftIsPressed) {
+            for (HUDComponent component: components) {
+                component.reset();
+            }
+        }
+
         if (keyCode == GLFW.GLFW_KEY_R && selected != null) {
             selected.reset();
         }
@@ -128,6 +115,17 @@ public class ComponentEditScreen extends Screen {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
         super.render(context, mouseX, mouseY, deltaTicks);
+        int width =  context.getScaledWindowWidth();
+        int height = context.getScaledWindowHeight();
+
+        context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, CROSSHAIR, width / 2 - CROSSHAIR_SIZE, height /2  - CROSSHAIR_SIZE, CROSSHAIR_SIZE * 2,  CROSSHAIR_SIZE * 2, Constants.WHITE_COLOR);
+
+        TextRenderer renderer = this.textRenderer;
+
+        for (int i = 0; i < INFO.length; i++) {
+            context.drawText(textRenderer, INFO[i], 1, height - ((renderer.fontHeight + 1) * (INFO.length - i)), 0xffffffff, true);
+        }
+
         if (selected != null) {
             selected.renderHighlight(context);
         }

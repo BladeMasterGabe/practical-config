@@ -1,4 +1,4 @@
-package config.practical.screenwidgets;
+package config.practical.widgets;
 
 import config.practical.utilities.DrawHelper;
 import config.practical.widgets.abstracts.ConfigChild;

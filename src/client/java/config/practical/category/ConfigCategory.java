@@ -1,6 +1,6 @@
 package config.practical.category;
 
-import config.practical.screenwidgets.ConfigSection;
+import config.practical.widgets.ConfigSection;
 import config.practical.widgets.abstracts.ConfigParent;
 import net.minecraft.client.gui.widget.ClickableWidget;
 

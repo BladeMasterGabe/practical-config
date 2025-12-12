@@ -1,5 +1,6 @@
-package config.practical.screenwidgets;
+package config.practical;
 
+import config.practical.widgets.ConfigSection;
 import config.practical.widgets.abstracts.ConfigChild;
 import config.practical.widgets.abstracts.ConfigParent;
 import net.minecraft.client.gui.DrawContext;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConfigScroll extends ContainerWidget {
+class ConfigScroll extends ContainerWidget {
 
     private static final int ITEM_MARGIN = 4;
     private static final int SLIDER_X_OFFSET = 24;

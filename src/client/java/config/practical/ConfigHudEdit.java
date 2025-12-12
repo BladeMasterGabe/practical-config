@@ -1,4 +1,4 @@
-package config.practical.screenwidgets;
+package config.practical;
 
 import config.practical.hud.ComponentEditScreen;
 import net.minecraft.client.MinecraftClient;
@@ -10,7 +10,7 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
-public class ConfigHudEdit extends ClickableWidget {
+class ConfigHudEdit extends ClickableWidget {
 
     private static final Text TEXT = Text.literal("Modify GUI");
 
