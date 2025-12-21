@@ -1,12 +1,14 @@
 package config.practical.hud;
 
 import config.practical.Practicalconfig;
+import config.practical.utilities.Constants;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.client.util.Window;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -66,17 +68,19 @@ public class HUDComponent implements HudElement {
         this.renderSupplier = renderSupplier;
         this.editSupplier = editSupplier;
 
-        HudElementRegistry.addLast(Identifier.of(Practicalconfig.MOD_ID,  "component-" + componentCount), this);
+        HudElementRegistry.addLast(Identifier.of(Practicalconfig.MOD_ID, "component-" + componentCount), this);
         componentCount++;
         ComponentEditScreen.addComponent(this);
     }
 
     //backwards compatibility
+    @SuppressWarnings("unused")
     public HUDComponent(double x, double y, int width, int height, float scale, String info, @NotNull ConditionSupplier conditionSupplier, @NotNull RenderSupplier renderSupplier) {
         this(x, y, width, height, scale, info, conditionSupplier, renderSupplier, () -> true);
     }
 
     //backwards compatibility
+    @SuppressWarnings("unused")
     public HUDComponent(double x, double y, int width, int height, float scale, @NotNull ConditionSupplier conditionSupplier, @NotNull RenderSupplier renderSupplier) {
         this(x, y, width, height, scale, "", conditionSupplier, renderSupplier, () -> true);
     }
@@ -140,6 +144,61 @@ public class HUDComponent implements HudElement {
     public void setDimension(int width, int height) {
         this.width = width;
         this.height = height;
+    }
+
+    public void centerHorizontally(Window window) {
+        int windowWidth = window.getScaledWidth();
+        x = (windowWidth - width * scale) / (windowWidth * 2.0);
+    }
+
+    public void centerVertically(Window window) {
+        int windowHeight = window.getScaledHeight();
+        y = (windowHeight - height * scale) / (windowHeight * 2.0);
+    }
+
+    public double calcXSnap(double scaledX, Window window) {
+        int windowWidth = window.getScaledWidth();
+
+        double diff = scaledX - (windowWidth / 2.0);
+
+        double mod = (Math.abs(diff) % Constants.GRID_SIZE);
+        if (mod > Constants.GRID_SIZE / 2.0) {
+            mod -= Constants.GRID_SIZE;
+        }
+
+        if (diff >= 0) {
+            return (scaledX - mod) / windowWidth;
+        } else {
+            return (scaledX + mod) / windowWidth;
+        }
+    }
+
+    public double calcYSnap(double scaledY, Window window) {
+        int windowHeight = window.getScaledHeight();
+
+        double diff = scaledY - (windowHeight / 2.0);
+
+        double mod = (Math.abs(diff) % Constants.GRID_SIZE);
+        if (mod > Constants.GRID_SIZE / 2.0) {
+            mod -= Constants.GRID_SIZE;
+        }
+
+        if (diff >= 0) {
+            return (scaledY - mod) / windowHeight;
+        } else {
+            return (scaledY + mod) / windowHeight;
+        }
+    }
+
+    public void snapToGrid(Window window) {
+        int windowWidth = window.getScaledWidth();
+        int windowHeight = window.getScaledHeight();
+        double scaledX = x * windowWidth;
+        double scaledY = y * windowHeight;
+
+        x = calcXSnap(scaledX, window);
+        y = calcYSnap(scaledY, window);
+
     }
 
     public boolean editable() {

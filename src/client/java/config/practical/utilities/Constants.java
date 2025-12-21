@@ -17,4 +17,6 @@ public class Constants {
     public static final int WHITE_COLOR = 0xffffffff;
 
     public static final int BACKGROUND_COLOR = 0xff999999;
+
+    public static final int GRID_SIZE = 20;
 }
