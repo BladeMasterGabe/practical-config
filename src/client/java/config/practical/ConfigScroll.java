@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-class ConfigScroll extends ContainerWidget {
+public class ConfigScroll extends ContainerWidget {
 
     private static final int ITEM_MARGIN = 4;
     private static final int SLIDER_X_OFFSET = 24;

@@ -51,7 +51,7 @@ public class ConfigurableScreen extends Screen {
         Window window = client.getWindow();
 
         scroll = new ConfigScroll(0, LIST_Y_OFFSET, window.getScaledWidth(), window.getScaledHeight() - LIST_Y_OFFSET, Constants.WIDGET_WIDTH + 100);
-        search = new ConfigSearch(this, client.textRenderer, WIDGET_X_OFFSET, (LIST_Y_OFFSET - ConfigSearch.HEIGHT) / 2);
+        search = new ConfigSearch(client.textRenderer, WIDGET_X_OFFSET, (LIST_Y_OFFSET - ConfigSearch.HEIGHT) / 2, this::updateScroll);
         categories = new ConfigCategoryList(this, WIDGET_X_OFFSET, LIST_Y_OFFSET + CATEGORY_Y_OFFSET);
         hudEdit = new ConfigHudEdit(this, window.getScaledWidth() - ConfigHudEdit.WIDTH - WIDGET_X_OFFSET, (LIST_Y_OFFSET - ConfigHudEdit.HEIGHT) / 2);
 
