@@ -62,7 +62,7 @@ class SoundScreen extends Screen {
         text = new TextWidget(textX, 0, Constants.WIDGET_WIDTH, BUTTON_HEIGHT, Text.literal("Sound: " + soundData.getSound().toString()), textRenderer).alignLeft();
         confirm = ButtonWidget.builder(btnText, this::confirmSound).position(textX + Constants.WIDGET_WIDTH, 0).width(btnWidth).build();
         scroll = new ConfigScroll(0, BUTTON_HEIGHT + 10, window.getScaledWidth(), scrollHeight, Constants.WIDGET_WIDTH);
-        search = new ConfigSearch(client.textRenderer, (window.getScaledWidth() - ConfigSearch.WIDTH) / 2, scrollHeight + BUTTON_HEIGHT, this::updateScroll);
+        search = new ConfigSearch(client.textRenderer, (window.getScaledWidth() - ConfigSearch.WIDTH) / 2, scrollHeight + scroll.getY() + 5, this::updateScroll);
         updateScroll("");
     }
 
@@ -85,12 +85,13 @@ class SoundScreen extends Screen {
         }
 
         scroll.update();
+        scroll.setScrollY(0);
     }
 
     public void setIdentifier(Identifier identifier) {
         if (identifier == null) return;
         this.identifier = identifier;
-        text.setMessage(Text.literal("Sound: " + identifier.toString()));
+        text.setMessage(Text.literal("Sound: " + identifier));
     }
 
     public void playSound(Identifier identifier) {
