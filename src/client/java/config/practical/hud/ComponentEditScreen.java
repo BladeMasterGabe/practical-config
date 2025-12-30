@@ -4,8 +4,10 @@ import config.practical.Config;
 import config.practical.utilities.Constants;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.RenderPipelines;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.client.util.Window;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -85,9 +87,9 @@ public class ComponentEditScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        int x = (int) mouseX;
-        int y = (int) mouseY;
+    public boolean mouseClicked(Click click, boolean doubled) {
+        int x = (int) click.x();
+        int y = (int) click.y();
 
         selected = null;
         for (HUDComponent component : components) {
@@ -98,27 +100,32 @@ public class ComponentEditScreen extends Screen {
                 break;
             }
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(click, doubled);
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+    public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+
         if (isDragging && selected != null) {
             assert client != null;
             Window window = client.getWindow();
-            selected.move(deltaX / window.getScaledWidth(), deltaY / window.getScaledHeight());
+            selected.move(offsetX / window.getScaledWidth(), offsetY / window.getScaledHeight());
         }
-        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+
+        return super.mouseDragged(click, offsetX, offsetY);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(Click click) {
         isDragging = false;
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(click);
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyInput input) {
+        int modifiers = input.modifiers();
+        int keyCode = input.key();
+
         boolean ctrlIsPressed = (modifiers & GLFW.GLFW_MOD_CONTROL) != 0;
         boolean shiftIsPressed = (modifiers & GLFW.GLFW_MOD_SHIFT) != 0;
 
@@ -177,7 +184,8 @@ public class ComponentEditScreen extends Screen {
 
             }
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(input);
+
     }
 
     @Override

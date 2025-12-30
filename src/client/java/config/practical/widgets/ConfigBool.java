@@ -4,10 +4,10 @@ import config.practical.utilities.Constants;
 import config.practical.utilities.DrawHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -59,7 +59,7 @@ public class ConfigBool extends ClickableWidget {
         if (totalTicks < MAX_TICKS) {
             totalTicks = Math.min(totalTicks + deltaTicks, MAX_TICKS);
         }
-        ;
+
 
         float delta = totalTicks / MAX_TICKS;
         int lerpedPositon;
@@ -85,13 +85,12 @@ public class ConfigBool extends ClickableWidget {
         DrawHelper.drawBackground(context, x + Constants.WIDGET_WIDTH - TRACK_WIDTH - THUMB_MARGIN + lerpedPositon - 1, y + (HEIGHT - TRACK_HEIGHT) / 2 - 1, THUMB_SIZE, THUMB_SIZE);
     }
 
-
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(Click click, boolean doubled) {
         boolean newValue = !supplier.get();
         consumer.accept(newValue);
         totalTicks = 0;
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(click, doubled);
     }
 
     @Override

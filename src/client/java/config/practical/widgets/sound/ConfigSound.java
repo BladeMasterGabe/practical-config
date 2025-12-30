@@ -9,6 +9,7 @@ import config.practical.widgets.sliders.ConfigFloat;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.RenderPipelines;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -47,8 +48,8 @@ public class ConfigSound extends ConfigSection {
         }
 
         @Override
-        public void onClick(double mouseX, double mouseY) {
-            super.onClick(mouseX, mouseY);
+        public void onClick(Click click, boolean doubled) {
+            super.onClick(click, doubled);
             MinecraftClient.getInstance().setScreen(new SoundScreen(soundData, this));
         }
 

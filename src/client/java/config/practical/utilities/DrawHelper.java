@@ -54,4 +54,11 @@ public class DrawHelper {
     public static void drawBackground(DrawContext context, int x, int y, int width, int height) {
         drawBackground(context, x, y, width, height, Constants.BACKGROUND_COLOR);
     }
+
+    public static void drawBorder(DrawContext context, int x, int y, int width, int height, int color) {
+        context.drawHorizontalLine(x, x + width, y, color);
+        context.drawHorizontalLine(x, x + width, y + height - 1, color);
+        context.drawVerticalLine(x, y, y + height, color);
+        context.drawVerticalLine(x + width - 1, y, y + height, color);
+    }
 }

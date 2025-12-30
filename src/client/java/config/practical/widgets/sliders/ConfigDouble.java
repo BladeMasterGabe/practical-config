@@ -1,12 +1,14 @@
 package config.practical.widgets.sliders;
 
 import config.practical.utilities.Constants;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+@SuppressWarnings("unused")
 public class ConfigDouble extends Slider {
     private final double step, min, max;
     private final Supplier<Double> supplier;
@@ -20,6 +22,7 @@ public class ConfigDouble extends Slider {
      * @param min      the min value
      * @param max      the max value
      */
+    @SuppressWarnings("unused")
     public ConfigDouble(Text message, Supplier<Double> supplier, Consumer<Double> consumer, double step, double min, double max) {
         super(message);
         this.supplier = supplier;
@@ -38,14 +41,19 @@ public class ConfigDouble extends Slider {
 
     @Override
     void updateValue(float delta) {
-        double accurateValue = ((max - min) * delta) + min;
-        accurateValue -= accurateValue % step;
+        double accurateValue;
+        if (delta == 1.0) {
+            accurateValue = max;
+        } else {
+            accurateValue = ((max - min) * delta) + min;
+            accurateValue -= accurateValue % step;
+        }
         consumer.accept(accurateValue);
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-
+    public boolean keyPressed(KeyInput input) {
+        int keyCode = input.key();
         if (keyCode == GLFW.GLFW_KEY_LEFT) {
             consumer.accept(Math.max(supplier.get() - step, min));
             updateThumbPosWithDelta((float)((supplier.get() - min) / (max - min)));
@@ -56,7 +64,7 @@ public class ConfigDouble extends Slider {
             return true;
         }
 
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(input);
     }
 
 }

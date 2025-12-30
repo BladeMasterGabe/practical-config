@@ -8,7 +8,11 @@ import config.practical.manager.ConfigValue;
 import config.practical.utilities.Constants;
 import config.practical.widgets.ConfigBool;
 import config.practical.widgets.ConfigSection;
+import config.practical.widgets.ConfigString;
 import config.practical.widgets.ConfigTextArea;
+import config.practical.widgets.color.ConfigColor;
+import config.practical.widgets.options.ConfigOptions;
+import config.practical.widgets.sliders.ConfigFloat;
 import config.practical.widgets.sound.ConfigSound;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -31,6 +35,21 @@ import java.util.List;
  */
 class TestFile {
 
+    enum Directions {
+        NORTH("North"), SOUTH ("South"), EAST("East"), WEST("West");
+
+        final String name;
+
+        Directions(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
     @ConfigValue
     public static SoundData someSound = new SoundData(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 1, 1);
 
@@ -39,6 +58,21 @@ class TestFile {
 
     @ConfigValue
     public static boolean someBoolean = false;
+
+    @ConfigValue
+    public static int someColor = 0xff22ff22;
+
+    @ConfigValue
+    public static int noTransparencyColor = 0xff22ff22;
+
+    @ConfigValue
+    public static float someFloat = 0.5f;
+
+    @ConfigValue
+    public static String someString = "Hello world";
+
+    @ConfigValue
+    public static Directions someEnum = Directions.NORTH;
 
     @ConfigValue
     public static HUDComponent myComponent = new HUDComponent(0, 0, 100, 50, 1, () -> true, (component, context) -> {
@@ -71,7 +105,7 @@ class TestFile {
                 "opens a Config menu",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_RIGHT_SHIFT,
-                "some category"));
+                KeyBinding.Category.MISC));
 
         ClientTickEvents.END_CLIENT_TICK.register((client -> {
             if (openConfig.wasPressed()) {
@@ -85,36 +119,33 @@ class TestFile {
     public static Screen createScreen(Screen parent) {
         ConfigurableScreen screen = new ConfigurableScreen(Text.literal("This is the title"), parent, manager);
         ConfigCategory category = new ConfigCategory("This is a category");
-        ConfigSection section = new ConfigSection(Text.literal("some section"));
+        category.add(new ConfigColor(Text.literal("Color selection"), () -> someColor, color -> someColor = color, "some-identifier", true));
+        category.add(new ConfigColor(Text.literal("Color with max alpha"), () -> noTransparencyColor, color -> noTransparencyColor = color, "another-identifier", false));
+        category.add(new ConfigFloat(Text.literal("This is a slider"), () -> someFloat, newFloat -> someFloat = newFloat, 0.1f, 0, 1));
+        category.add(new ConfigString(Text.literal("This is a string"), () -> someString, newString -> someString = newString));
+        category.add(new ConfigOptions<>(Text.literal("This is an enum"),Directions.values(), () -> someEnum, newEnum -> someEnum = newEnum));
+
+        ConfigSection section = new ConfigSection(Text.literal("This is a section"));
         section.add(new ConfigBool(Text.literal("This is a bool"), () -> someBoolean, bool -> someBoolean = bool));
-        section.add(new ConfigSound(Text.literal("Some sound"), someSound));
-        section.add(new ConfigTextArea("To be, or not to be, that is the question:\n" +
+        section.add(new ConfigSound(Text.literal("This is a sound"), someSound));
+        section.add(new ConfigTextArea(
+                "To be, or not to be, that is the question:\n" +
                 "Whether 'tis nobler in the mind to suffer\n" +
                 "The slings and arrows of outrageous fortune,\n" +
                 "Or to take arms against a sea of troubles\n" +
                 "And by opposing end them. To die—to sleep,\n" +
                 "No more; and by a sleep to say we end\n" +
                 "The heart-ache and the thousand natural shocks\n" +
-                "That flesh is heir to: 'tis a consummation\n" +
-                "Devoutly to be wish'd. To die, to sleep;\n" +
-                "To sleep, perchance to dream—ay, there's the rub:\n" +
-                "For in that sleep of death what dreams may come,\n" +
-                "When we have shuffled off this mortal coil,\n" +
-                "Must give us pause—there's the respect\n" +
-                "That makes calamity of so long life.\n" +
-                "For who would bear the whips and scorns of time,\n" +
-                "Th'oppressor's wrong, the proud man's contumely,\n" +
-                "The pangs of dispriz'd love, the law's delay,\n" +
-                "The insolence of office, and the spurns\n" +
-                "That patient merit of th'unworthy takes,\n" +
-                "When he himself might his quietus make\n" +
-                "With a bare bodkin? Who would fardels bear,\n" +
-                "To grunt and sweat under a weary life,\n" +
-                "But that the dread of something after death,\n" +
-                "The undiscovere'd country, from whose bourn\n" +
-                "No traveller returns, puzzles the will,"));
+                "That flesh is heir to: 'tis a consummation\n"));
         category.add(section);
+
         screen.addCategory(category);
+
+        ConfigCategory category2 = new ConfigCategory("This is another category");
+        category2.add(new ConfigTextArea("Some text"));
+
+        screen.addCategory(category2);
+
         return screen;
     }
 }

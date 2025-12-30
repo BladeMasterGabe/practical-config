@@ -59,7 +59,7 @@ class SoundScreen extends Screen {
         TextRenderer textRenderer = client.textRenderer;
         int btnWidth = textRenderer.getWidth(btnText) * 2;
 
-        text = new TextWidget(textX, 0, Constants.WIDGET_WIDTH, BUTTON_HEIGHT, Text.literal("Sound: " + soundData.getSound().toString()), textRenderer).alignLeft();
+        text = new TextWidget(textX, 0, Constants.WIDGET_WIDTH, BUTTON_HEIGHT, Text.literal("Sound: " + soundData.getSound().toString()), textRenderer);
         confirm = ButtonWidget.builder(btnText, this::confirmSound).position(textX + Constants.WIDGET_WIDTH, 0).width(btnWidth).build();
         scroll = new ConfigScroll(0, BUTTON_HEIGHT + 10, window.getScaledWidth(), scrollHeight, Constants.WIDGET_WIDTH);
         search = new ConfigSearch(client.textRenderer, (window.getScaledWidth() - ConfigSearch.WIDTH) / 2, scrollHeight + scroll.getY() + 5, this::updateScroll);

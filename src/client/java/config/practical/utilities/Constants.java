@@ -1,9 +1,12 @@
 package config.practical.utilities;
 
 import java.text.DecimalFormat;
+import java.util.logging.Logger;
 
 public class Constants {
     public static final String NAMESPACE = "practical-config";
+
+    public static final Logger LOGGER = Logger.getLogger(NAMESPACE);
 
     public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
 

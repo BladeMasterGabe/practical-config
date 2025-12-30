@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import config.practical.hud.HUDComponent;
+import config.practical.utilities.Constants;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,7 +17,6 @@ public class ConfigManager {
 
     private final String filePath;
     private final List<Class<?>> classes;
-
 
     public ConfigManager(String filePath, List<Class<?>> classes) {
         this.filePath = filePath;
@@ -43,7 +43,7 @@ public class ConfigManager {
                     Object value = field.get(null);
                     obj.add(name, gson.toJsonTree(value));
                 } catch (IllegalAccessException ignored) {
-
+                    Constants.LOGGER.warning("Field " + field.getName() + " is not accessible.");
                 }
 
             }
@@ -53,7 +53,7 @@ public class ConfigManager {
         try (FileWriter writer = new FileWriter(filePath)) {
             writer.write(tree.toString());
         } catch (IOException ignored) {
-
+            Constants.LOGGER.severe("Could not save config file: " + filePath);
         }
     }
 
@@ -63,6 +63,7 @@ public class ConfigManager {
         try {
             jsonContent = new String(Files.readAllBytes(Paths.get(filePath)));
         } catch (IOException ignored) {
+            Constants.LOGGER.severe("Could not read file: " + filePath);
             return;
         }
         Gson gson = new Gson();
@@ -77,9 +78,14 @@ public class ConfigManager {
     private void loadField(JsonObject object, Gson gson, Field field) {
         if (!field.isAnnotationPresent(ConfigValue.class)) return;
 
+        boolean alreadyAccessible = field.canAccess(null);
+
         String name = field.getName();
         if (!object.has(name)) return;
 
+        if (!alreadyAccessible) {
+            field.setAccessible(true);
+        }
         try {
             JsonElement jsonVal = object.get(name);
             Object val = gson.fromJson(jsonVal, field.getType());
@@ -89,8 +95,10 @@ public class ConfigManager {
                 field.set(null, val);
             }
         } catch (IllegalAccessException ignored) {
-
+            Constants.LOGGER.warning("Could not read field: " + field.getName());
         }
-
+        if (!alreadyAccessible) {
+            field.setAccessible(false);
+        }
     }
 }
