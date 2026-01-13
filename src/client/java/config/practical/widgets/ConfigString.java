@@ -5,7 +5,9 @@ import config.practical.utilities.DrawHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.input.CharInput;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -18,13 +20,15 @@ public class ConfigString extends TextFieldWidget {
     private static final int INPUT_HEIGHT = 14;
     private static final int INPUT_COLOR = 0xff222222;
 
+    private int maxLength;
+    private int selectionEnd;
+    private Consumer<String> changedListener;
+
     public ConfigString(Text message, Supplier<String> supplier, Consumer<String> consumer, boolean formatText) {
         super(MinecraftClient.getInstance().textRenderer, Constants.WIDGET_WIDTH, HEIGHT, message);
         this.setMaxLength(100);
         this.setText(supplier.get());
-        this.
-
-        setChangedListener(string -> {
+        this.setChangedListener(string -> {
             if (formatText) {
                 consumer.accept(string.replace('&', '§'));
             } else {
@@ -44,6 +48,71 @@ public class ConfigString extends TextFieldWidget {
         DrawHelper.drawBackground(context, getX(), super.getY() + (height - INPUT_HEIGHT), width, INPUT_HEIGHT, INPUT_COLOR);
         super.renderWidget(context, mouseX, mouseY, deltaTicks);
 
+    }
+
+    @Override
+    public boolean charTyped(CharInput input) {
+        if (!this.isActive()) {
+            return false;
+        } else if (input.isValidChar() || isValid(input)) {
+            this.write(input.asString());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    private boolean isValid(CharInput input) {
+        return input.asString().contains("§");
+    }
+
+    /**
+     * A slightly modified version of the TextFieldWidget write(String)
+     * because it removes chars like §
+     * @param text The text to add
+     */
+    @Override
+    public void write(String text) {
+        int i = Math.min(getCursor(), this.selectionEnd);
+        int j = Math.max(getCursor(), this.selectionEnd);
+        int k = this.maxLength - getText().length() - (i - j);
+        if (k > 0) {
+            //String string = StringHelper.stripInvalidChars(text);
+            String string = text;
+            int l = string.length();
+            if (k < l) {
+                if (Character.isHighSurrogate(string.charAt(k - 1))) {
+                    k--;
+                }
+
+                string = string.substring(0, k);
+                l = k;
+            }
+            String string2 = new StringBuilder(getText()).replace(i, j, string).toString();
+            setText(string2);
+            this.setSelectionStart(i + l);
+            this.setSelectionEnd(getCursor());
+            changedListener.accept(getText());
+        }
+    }
+
+    @Override
+    public void setSelectionEnd(int index) {
+        this.selectionEnd = MathHelper.clamp(index, 0, getText().length());
+        super.setSelectionEnd(index);
+    }
+
+    @Override
+    public void setMaxLength(int maxLength) {
+        this.maxLength = maxLength;
+        super.setMaxLength(maxLength);
+    }
+
+    @Override
+    public void setChangedListener(Consumer<String> changedListener) {
+        this.changedListener = changedListener;
+        super.setChangedListener(changedListener);
     }
 
     @Override

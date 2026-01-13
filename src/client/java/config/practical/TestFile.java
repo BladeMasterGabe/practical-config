@@ -12,7 +12,9 @@ import config.practical.widgets.ConfigString;
 import config.practical.widgets.ConfigTextArea;
 import config.practical.widgets.color.ConfigColor;
 import config.practical.widgets.options.ConfigOptions;
+import config.practical.widgets.sliders.ConfigDouble;
 import config.practical.widgets.sliders.ConfigFloat;
+import config.practical.widgets.sliders.ConfigInt;
 import config.practical.widgets.sound.ConfigSound;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -66,7 +68,13 @@ class TestFile {
     public static int noTransparencyColor = 0xff22ff22;
 
     @ConfigValue
+    public static int someInt = 5;
+
+    @ConfigValue
     public static float someFloat = 0.5f;
+
+    @ConfigValue
+    public static double someDouble = 0.5;
 
     @ConfigValue
     public static String someString = "Hello world";
@@ -121,7 +129,9 @@ class TestFile {
         ConfigCategory category = new ConfigCategory("This is a category");
         category.add(new ConfigColor(Text.literal("Color selection"), () -> someColor, color -> someColor = color, "some-identifier", true));
         category.add(new ConfigColor(Text.literal("Color with max alpha"), () -> noTransparencyColor, color -> noTransparencyColor = color, "another-identifier", false));
-        category.add(new ConfigFloat(Text.literal("This is a slider"), () -> someFloat, newFloat -> someFloat = newFloat, 0.1f, 0, 1));
+        category.add(new ConfigInt(Text.literal("This is a int slider"), () -> someInt, newInt -> someInt = newInt, 1, 0, 10));
+        category.add(new ConfigFloat(Text.literal("This is a float slider"), () -> someFloat, newFloat -> someFloat = newFloat, 0.1f, 0, 1));
+        category.add(new ConfigDouble(Text.literal("This is a double slider"), () -> someDouble, newDouble -> someDouble = newDouble, 0.1, 0, 1));
         category.add(new ConfigString(Text.literal("This is a string"), () -> someString, newString -> someString = newString));
         category.add(new ConfigOptions<>(Text.literal("This is an enum"),Directions.values(), () -> someEnum, newEnum -> someEnum = newEnum));
 
