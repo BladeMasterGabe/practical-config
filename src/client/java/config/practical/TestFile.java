@@ -86,7 +86,7 @@ class TestFile {
     public static HUDComponent myComponent = new HUDComponent(0, 0, 100, 50, 1, () -> true, (component, context) -> {
         int x = component.getScaledX();
         int y = component.getScaledY();
-        context.fill(x, y, x + component.getWidth(), y + component.getHeight(), 0xffff0000);
+        context.fill(x, y, x + component.getWidth(), y + component.getHeight(), noTransparencyColor);
     });
 
     @ConfigValue
@@ -98,6 +98,7 @@ class TestFile {
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
         int centered = (component.getWidth() - textRenderer.getWidth(text)) / 2;
+        context.fill(x, y, x + component.getWidth(), y + component.getHeight(), someColor);
         context.drawText(textRenderer, text, x + centered, y + (component.getHeight() - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
     });
 

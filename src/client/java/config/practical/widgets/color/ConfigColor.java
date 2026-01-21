@@ -123,7 +123,7 @@ public class ConfigColor extends ConfigParent {
         if (transparency) {
             consumer.accept(alphaValue << 24 | color);
         } else {
-            consumer.accept(color);
+            consumer.accept(0xff << 24 | color);
         }
         float[] hsb = new float[3];
 
@@ -158,7 +158,7 @@ public class ConfigColor extends ConfigParent {
         if (transparency) {
             consumer.accept(alphaValue << 24 | color);
         } else {
-            consumer.accept(color);
+            consumer.accept(0xff << 24 | color);
         }
     }
 
