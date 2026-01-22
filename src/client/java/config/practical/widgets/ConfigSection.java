@@ -104,14 +104,16 @@ public class ConfigSection extends ContainerWidget {
         }
     }
 
-    public void hideChildComponents() {
+    public void hideChildComponents(boolean keepFocused) {
         for (ClickableWidget widget : children) {
+            if (widget.isFocused() && keepFocused) continue;
+
             if (widget instanceof ConfigParent parent) {
                 parent.hideAll();
                 parent.update();
 
             } else if (widget instanceof ConfigSection section) {
-                section.hideChildComponents();
+                section.hideChildComponents(keepFocused);
             }
         }
     }

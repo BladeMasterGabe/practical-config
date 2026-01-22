@@ -128,8 +128,6 @@ class TestFile {
     public static Screen createScreen(Screen parent) {
         ConfigurableScreen screen = new ConfigurableScreen(Text.literal("This is the title"), parent, manager);
         ConfigCategory category = new ConfigCategory("This is a category");
-        category.add(new ConfigColor(Text.literal("Color selection"), () -> someColor, color -> someColor = color, "some-identifier", true));
-        category.add(new ConfigColor(Text.literal("Color with max alpha"), () -> noTransparencyColor, color -> noTransparencyColor = color, "another-identifier", false));
         category.add(new ConfigInt(Text.literal("This is a int slider"), () -> someInt, newInt -> someInt = newInt, 1, 0, 10));
         category.add(new ConfigFloat(Text.literal("This is a float slider"), () -> someFloat, newFloat -> someFloat = newFloat, 0.1f, 0, 1));
         category.add(new ConfigDouble(Text.literal("This is a double slider"), () -> someDouble, newDouble -> someDouble = newDouble, 0.1, 0, 1));
@@ -149,6 +147,11 @@ class TestFile {
                 "The heart-ache and the thousand natural shocks\n" +
                 "That flesh is heir to: 'tis a consummation\n"));
         category.add(section);
+
+        ConfigSection colorSection = new ConfigSection(Text.literal("Color selectors"));
+        colorSection.add(new ConfigColor(Text.literal("Color selection"), () -> someColor, color -> someColor = color, "some-identifier", true));
+        colorSection.add(new ConfigColor(Text.literal("Color with max alpha"), () -> noTransparencyColor, color -> noTransparencyColor = color, "another-identifier", false));
+        category.add(colorSection);
 
         screen.addCategory(category);
 

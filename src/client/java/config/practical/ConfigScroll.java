@@ -50,7 +50,7 @@ public class ConfigScroll extends ContainerWidget {
     @Override
     public void setFocused(@Nullable Element focused) {
         super.setFocused(focused);
-        hideChildComponents();
+        hideChildComponents(true);
 
     }
 
@@ -116,7 +116,7 @@ public class ConfigScroll extends ContainerWidget {
             }
 
             if (widget instanceof ConfigSection section) {
-                section.hideChildComponents();
+                section.hideChildComponents(false);
             }
         }
 
@@ -131,9 +131,11 @@ public class ConfigScroll extends ContainerWidget {
         contentHeight = highestY + (int) getScrollY();
     }
 
-    public void hideChildComponents() {
+    public void hideChildComponents(boolean keepFocused) {
         for (ClickableWidget widget : children) {
-            if (widget.isFocused()) continue;
+            if (widget.isFocused() && !(widget instanceof ConfigSection) && keepFocused) {
+                continue;
+            }
 
             if (widget instanceof ConfigParent parent) {
                 if (parent.hasSelectedComponent()) continue;
@@ -142,7 +144,7 @@ public class ConfigScroll extends ContainerWidget {
             }
 
             if (widget instanceof ConfigSection section) {
-                section.hideChildComponents();
+                section.hideChildComponents(keepFocused);
             }
         }
     }

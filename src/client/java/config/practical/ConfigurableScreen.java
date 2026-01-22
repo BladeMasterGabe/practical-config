@@ -95,7 +95,7 @@ public class ConfigurableScreen extends Screen {
         }
 
         scroll.setScrollY(0);
-        scroll.hideChildComponents();
+        scroll.hideChildComponents(false);
     }
 
     @Override
