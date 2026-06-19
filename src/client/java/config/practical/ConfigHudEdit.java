@@ -4,13 +4,13 @@ import config.practical.hud.ComponentEditScreen;
 import config.practical.utilities.DrawHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 class ConfigHudEdit extends AbstractWidget {
 
@@ -33,7 +33,7 @@ class ConfigHudEdit extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         int x = getX();
         int y = getY();
         Minecraft client = Minecraft.getInstance();
@@ -46,17 +46,17 @@ class ConfigHudEdit extends AbstractWidget {
 
         int textWidth = font.width(message);
 
-        graphics.drawString(font, message, x + (WIDTH - textWidth) / 2, y + TEXT_Y_OFFSET, WHITE_COLOR, true);
+        graphics.text(font, message, x + (WIDTH - textWidth) / 2, y + TEXT_Y_OFFSET, WHITE_COLOR, true);
     }
 
     @Override
-    public void onClick(MouseButtonEvent event, boolean doubled) {
+    public void onClick(@NonNull MouseButtonEvent event, boolean doubled) {
         super.onClick(event, doubled);
         Minecraft.getInstance().setScreen(new ComponentEditScreen(screen));
     }
 
     @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+    protected void updateWidgetNarration(@NonNull NarrationElementOutput narrationElementOutput) {
 
     }
 }

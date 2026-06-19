@@ -3,11 +3,11 @@ package config.practical.widgets.color;
 import config.practical.utilities.Constants;
 import config.practical.utilities.DrawHelper;
 import config.practical.widgets.abstracts.ConfigChild;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.NonNull;
 
 class AlphaSlider extends ConfigChild {
 
@@ -25,7 +25,7 @@ class AlphaSlider extends ConfigChild {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         if (!parent.displayColorSelector()) return;
 
         int x = getX();
@@ -38,19 +38,14 @@ class AlphaSlider extends ConfigChild {
     }
 
     @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-
-    }
-
-    @Override
-    protected void onDrag(MouseButtonEvent event, double offsetX, double offsetY) {
+    protected void onDrag(@NonNull MouseButtonEvent event, double offsetX, double offsetY) {
         super.onDrag(event, offsetX, offsetY);
         setThumbPosition(event.x());
 
     }
 
     @Override
-    public void onClick(MouseButtonEvent event, boolean doubled) {
+    public void onClick(@NonNull MouseButtonEvent event, boolean doubled) {
         super.onClick(event, doubled);
         setThumbPosition(event.x());
     }

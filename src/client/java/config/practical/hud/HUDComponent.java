@@ -8,11 +8,12 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3x2fStack;
+import org.jspecify.annotations.NonNull;
 
 public class HUDComponent implements HudElement {
 
@@ -216,7 +217,7 @@ public class HUDComponent implements HudElement {
                 && screenY <= mouseY && mouseY <= screenY + (height * scale);
     }
 
-    public void renderIgnoreConditions(GuiGraphics graphics) {
+    public void renderIgnoreConditions(GuiGraphicsExtractor graphics) {
         Matrix3x2fStack stack = graphics.pose();
         stack.pushMatrix();
         stack.scale(scale, scale);
@@ -224,7 +225,7 @@ public class HUDComponent implements HudElement {
         stack.popMatrix();
     }
 
-    public void renderHighlight(GuiGraphics graphics) {
+    public void renderHighlight(GuiGraphicsExtractor graphics) {
         Matrix3x2fStack stack = graphics.pose();
         stack.pushMatrix();
         stack.scale(scale, scale);
@@ -232,12 +233,12 @@ public class HUDComponent implements HudElement {
         int y = getScaledY();
         Font textRenderer = Minecraft.getInstance().font;
         graphics.fill(x - HIGHLIGHT_MARGIN, y - HIGHLIGHT_MARGIN, x + width + HIGHLIGHT_MARGIN, y + height + HIGHLIGHT_MARGIN, HIGHLIGHT_COLOR);
-        graphics.drawString(textRenderer, info, x + (width - textRenderer.width(info)) / 2, y - textRenderer.lineHeight - 2, 0xffffffff, true);
+        graphics.text(textRenderer, info, x + (width - textRenderer.width(info)) / 2, y - textRenderer.lineHeight - 2, 0xffffffff, true);
         stack.popMatrix();
     }
 
     @Override
-    public void render(GuiGraphics graphics, DeltaTracker tickCounter) {
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, @NonNull DeltaTracker deltaTracker) {
         if (!editSupplier.shouldBeEditable() || !conditionSupplier.shouldRender()) return;
         Matrix3x2fStack stack = graphics.pose();
         stack.pushMatrix();
@@ -268,7 +269,7 @@ public class HUDComponent implements HudElement {
          * @param component the component itself
          * @param graphics   GuiGraphics
          */
-        void render(HUDComponent component, GuiGraphics graphics);
+        void render(HUDComponent component, GuiGraphicsExtractor graphics);
     }
 
     public interface EditSupplier {

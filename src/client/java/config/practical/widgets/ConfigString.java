@@ -3,11 +3,12 @@ package config.practical.widgets;
 import config.practical.utilities.Constants;
 import config.practical.utilities.DrawHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -42,16 +43,16 @@ public class ConfigString extends EditBox {
     }
 
     @Override
-    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
+    public void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         DrawHelper.drawBackground(graphics, getX(), super.getY(), width, getMainBackgroundHeight());
-        graphics.drawString(Minecraft.getInstance().font, getMessage(), getX() + Constants.TEXT_PADDING, super.getY() + (getMainBackgroundHeight() - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
+        graphics.text(Minecraft.getInstance().font, getMessage(), getX() + Constants.TEXT_PADDING, super.getY() + (getMainBackgroundHeight() - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
         DrawHelper.drawBackground(graphics, getX(), super.getY() + (height - INPUT_HEIGHT), width, INPUT_HEIGHT, INPUT_COLOR);
-        super.renderWidget(graphics, mouseX, mouseY, deltaTicks);
+        super.extractWidgetRenderState(graphics, mouseX, mouseY, deltaTicks);
 
     }
 
     @Override
-    public boolean charTyped(CharacterEvent event) {
+    public boolean charTyped(@NonNull CharacterEvent event) {
         if (!this.isActive()) {
             return false;
         } else if (event.isAllowedChatCharacter() || isValid(event)) {
@@ -73,7 +74,7 @@ public class ConfigString extends EditBox {
      * @param text The text to add
      */
     @Override
-    public void insertText(String text) {
+    public void insertText(@NonNull String text) {
         int i = Math.min(getCursorPosition(), this.selectionEnd);
         int j = Math.max(getCursorPosition(), this.selectionEnd);
         int k = this.maxLength - getValue().length() - (i - j);
@@ -110,7 +111,7 @@ public class ConfigString extends EditBox {
     }
 
     @Override
-    public void setResponder(Consumer<String> responderListener) {
+    public void setResponder(@NonNull Consumer<String> responderListener) {
         this.responderListener = responderListener;
         super.setResponder(responderListener);
     }

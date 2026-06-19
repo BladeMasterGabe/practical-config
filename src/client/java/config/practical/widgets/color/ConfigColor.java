@@ -4,9 +4,10 @@ import config.practical.utilities.Constants;
 import config.practical.utilities.DrawHelper;
 import config.practical.widgets.abstracts.ConfigParent;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
 import java.util.function.Consumer;
@@ -85,7 +86,7 @@ public class ConfigColor extends ConfigParent {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
 
         int x = getX();
         int y = getY();
@@ -93,7 +94,7 @@ public class ConfigColor extends ConfigParent {
         int height = getHeight();
 
         DrawHelper.drawBackground(graphics, x, y, width, height);
-        graphics.drawString(Minecraft.getInstance().font, getMessage(), x + Constants.TEXT_PADDING, y + (HEIGHT - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
+        graphics.text(Minecraft.getInstance().font, getMessage(), x + Constants.TEXT_PADDING, y + (HEIGHT - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
 
         if (transparency) {
             DrawHelper.drawBackground(graphics, x + width - COLOR_SIZE - COLOR_RIGHT_PADDING, y + (height - COLOR_SIZE) / 2, COLOR_SIZE, COLOR_SIZE, supplier.get());
@@ -107,7 +108,7 @@ public class ConfigColor extends ConfigParent {
     }
 
     @Override
-    public void onClick(MouseButtonEvent event, boolean doubled) {
+    public void onClick(@NonNull MouseButtonEvent event, boolean doubled) {
         super.onClick(event, doubled);
         displayColorSelector = !displayColorSelector;
         update();

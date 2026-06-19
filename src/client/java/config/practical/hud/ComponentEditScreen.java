@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.Window;
 import config.practical.Config;
 import config.practical.utilities.Constants;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.joml.Matrix3x2fStack;
+import org.jspecify.annotations.NonNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -104,7 +105,7 @@ public class ComponentEditScreen extends Screen {
     }
 
     @Override
-    public boolean mouseDragged(MouseButtonEvent event, double offsetX, double offsetY) {
+    public boolean mouseDragged(@NonNull MouseButtonEvent event, double offsetX, double offsetY) {
 
         if (isDragging && selected != null) {
             Window window = minecraft.getWindow();
@@ -115,7 +116,7 @@ public class ComponentEditScreen extends Screen {
     }
 
     @Override
-    public boolean mouseReleased(MouseButtonEvent event) {
+    public boolean mouseReleased(@NonNull MouseButtonEvent event) {
         isDragging = false;
         return super.mouseReleased(event);
     }
@@ -187,8 +188,8 @@ public class ComponentEditScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
-        super.render(graphics, mouseX, mouseY, deltaTicks);
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
+        super.extractRenderState(graphics, mouseX, mouseY, deltaTicks);
         int width = graphics.guiWidth();
         int height = graphics.guiHeight();
 
@@ -200,19 +201,19 @@ public class ComponentEditScreen extends Screen {
             stack.pushMatrix();
             stack.translate(-0.5f, -0.5f);
             for (int i = width / 2; i >= 0; i -= Constants.GRID_SIZE) {
-                graphics.vLine(i, 0, height, gridColor);
+                graphics.verticalLine(i, 0, height, gridColor);
             }
 
             for (int i = height / 2; i >= 0; i -= Constants.GRID_SIZE) {
-                graphics.hLine(0, width, i, gridColor);
+                graphics.horizontalLine(0, width, i, gridColor);
             }
 
             for (int i = width / 2; i < width; i += Constants.GRID_SIZE) {
-                graphics.vLine(i, 0, height, gridColor);
+                graphics.verticalLine(i, 0, height, gridColor);
             }
 
             for (int i = height / 2; i < height; i += Constants.GRID_SIZE) {
-                graphics.hLine(0, width, i, gridColor);
+                graphics.horizontalLine(0, width, i, gridColor);
             }
 
             stack.popMatrix();
@@ -227,11 +228,11 @@ public class ComponentEditScreen extends Screen {
         }
 
         for (int i = 0; i < INFO.length; i++) {
-            graphics.drawString(font, INFO[i], 1, height - ((font.lineHeight + 1) * (INFO.length - i)), 0xffffffff, true);
+            graphics.text(font, INFO[i], 1, height - ((font.lineHeight + 1) * (INFO.length - i)), 0xffffffff, true);
         }
 
         for (int i = 0; i < KEYS.length; i++) {
-            graphics.drawString(font, KEYS[i], 7 + longest, height - ((font.lineHeight + 1) * (KEYS.length - i)), 0xffffffff, true);
+            graphics.text(font, KEYS[i], 7 + longest, height - ((font.lineHeight + 1) * (KEYS.length - i)), 0xffffffff, true);
         }
 
         if (selected != null) {

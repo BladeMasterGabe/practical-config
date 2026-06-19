@@ -4,11 +4,12 @@ import config.practical.utilities.Constants;
 import config.practical.utilities.DrawHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
 
 @SuppressWarnings("unused")
 public class ConfigButton extends AbstractWidget {
@@ -30,7 +31,7 @@ public class ConfigButton extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         int x = getX();
         int y = getY();
 
@@ -47,13 +48,13 @@ public class ConfigButton extends AbstractWidget {
 
         }
 
-        graphics.drawString(font, getMessage(), x + centered, y + (HEIGHT - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
+        graphics.text(font, getMessage(), x + centered, y + (HEIGHT - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
 
 
     }
 
     @Override
-    public void onClick(MouseButtonEvent event, boolean doubled) {
+    public void onClick(@NonNull MouseButtonEvent event, boolean doubled) {
         super.onClick(event, doubled);
         long diff = System.currentTimeMillis() - clickedTime;
 
@@ -64,7 +65,7 @@ public class ConfigButton extends AbstractWidget {
     }
 
     @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+    protected void updateWidgetNarration(@NonNull NarrationElementOutput narrationElementOutput) {
 
     }
 

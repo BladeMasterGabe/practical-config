@@ -3,13 +3,15 @@ package config.practical;
 import config.practical.widgets.ConfigSection;
 import config.practical.widgets.abstracts.ConfigChild;
 import config.practical.widgets.abstracts.ConfigParent;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractContainerWidget;
+import net.minecraft.client.gui.components.AbstractScrollArea;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +27,7 @@ public class ConfigScroll extends AbstractContainerWidget {
     private final int maxItemWidth;
 
     public ConfigScroll(int x, int y, int width, int height, int maxItemWidth) {
-        super(x, y, width, height, Component.empty());
+        super(x, y, width, height, Component.empty(), AbstractScrollArea.defaultSettings(10));
         this.children = new ArrayList<>();
         this.childWidgets = new ArrayList<>();
         this.contentHeight = 0;
@@ -34,7 +36,7 @@ public class ConfigScroll extends AbstractContainerWidget {
     }
 
     @Override
-    public List<? extends GuiEventListener> children() {
+    public @NonNull List<? extends GuiEventListener> children() {
         return children;
     }
 
@@ -70,8 +72,8 @@ public class ConfigScroll extends AbstractContainerWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
-        this.renderScrollbar(graphics, mouseX, mouseY);
+    protected void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
+        this.extractScrollbar(graphics, mouseX, mouseY);
 
         int x = getX();
         int y = getY();
@@ -82,12 +84,17 @@ public class ConfigScroll extends AbstractContainerWidget {
         graphics.enableScissor(x, y, x + width, y + height);
         for (AbstractWidget widget : children) {
             if (widget instanceof ConfigChild) continue;
-            widget.render(graphics, mouseX, mouseY, deltaTicks);
+            widget.extractRenderState(graphics, mouseX, mouseY, deltaTicks);
         }
         for (AbstractWidget widget : childWidgets) {
-            widget.render(graphics, mouseX, mouseY, deltaTicks);
+            widget.extractRenderState(graphics, mouseX, mouseY, deltaTicks);
         }
         graphics.disableScissor();
+    }
+
+    @Override
+    protected void updateWidgetNarration(@NonNull NarrationElementOutput output) {
+
     }
 
     @Override
@@ -147,10 +154,5 @@ public class ConfigScroll extends AbstractContainerWidget {
                 section.hideChildComponents(keepFocused);
             }
         }
-    }
-
-    @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-
     }
 }

@@ -4,10 +4,10 @@ import config.practical.utilities.Constants;
 import config.practical.utilities.DrawHelper;
 import config.practical.widgets.abstracts.ConfigChild;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
+import org.jspecify.annotations.NonNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Set;
@@ -76,7 +76,7 @@ class HexInput extends ConfigChild {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         if (!parent.displayColorSelector()) return;
 
         int x = getX();
@@ -85,12 +85,6 @@ class HexInput extends ConfigChild {
         int height = getHeight();
 
         DrawHelper.drawBackground(graphics, x, y, width, height, TEXT_BACKGROUND_COLOR);
-        graphics.drawString(Minecraft.getInstance().font, "#" + text, x + Constants.TEXT_PADDING, y + (height - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
+        graphics.text(Minecraft.getInstance().font, "#" + text, x + Constants.TEXT_PADDING, y + (height - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
     }
-
-    @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-
-    }
-
 }

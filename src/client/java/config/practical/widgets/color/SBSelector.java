@@ -4,12 +4,13 @@ import com.mojang.blaze3d.platform.NativeImage;
 import config.practical.utilities.Constants;
 import config.practical.widgets.abstracts.ConfigChild;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
 
@@ -31,7 +32,7 @@ class SBSelector extends ConfigChild {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         if (!parent.displayColorSelector()) return;
 
         int x = getX();
@@ -55,7 +56,7 @@ class SBSelector extends ConfigChild {
     }
 
     @Override
-    public void onClick(MouseButtonEvent event, boolean doubled) {
+    public void onClick(@NonNull MouseButtonEvent event, boolean doubled) {
         super.onClick(event, doubled);
 
         float saturation = Math.clamp((float) (event.x() - getX() - Constants.LINE_THICKNESS) / (float) SPRITE_SIZE, 0f, 1f);

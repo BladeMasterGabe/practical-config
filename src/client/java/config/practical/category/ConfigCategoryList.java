@@ -3,11 +3,12 @@ package config.practical.category;
 import config.practical.ConfigurableScreen;
 import config.practical.utilities.DrawHelper;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 
@@ -36,7 +37,7 @@ public class ConfigCategoryList extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
+    public void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
 
         int x = getX();
         int y = getY();
@@ -54,7 +55,7 @@ public class ConfigCategoryList extends AbstractWidget {
             DrawHelper.drawBorder(graphics, x, y + i * CATEGORY_HEIGHT, width, CATEGORY_HEIGHT, (category == selected ? SELECTED_COLOR : UNSELECTED_COLOR));
             String name = category.name;
 
-            graphics.drawString(font, name, x + PADDING_X, y + i * CATEGORY_HEIGHT + textPadding, TEXT_COLOR, true);
+            graphics.text(font, name, x + PADDING_X, y + i * CATEGORY_HEIGHT + textPadding, TEXT_COLOR, true);
         }
 
         graphics.disableScissor();
@@ -94,7 +95,7 @@ public class ConfigCategoryList extends AbstractWidget {
     }
 
     @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+    protected void updateWidgetNarration(@NonNull NarrationElementOutput narrationElementOutput) {
 
     }
 }

@@ -8,7 +8,7 @@ import config.practical.widgets.ConfigSection;
 import config.practical.widgets.sliders.ConfigFloat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
+import org.jspecify.annotations.NonNull;
 
 public class ConfigSound extends ConfigSection {
 
@@ -34,7 +35,7 @@ public class ConfigSound extends ConfigSection {
         }
 
         @Override
-        protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
+        protected void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
             int x = getX();
             int y = getY();
 
@@ -42,19 +43,19 @@ public class ConfigSound extends ConfigSection {
             Font font = client.font;
 
             DrawHelper.drawBackground(graphics, x, y, width, height);
-            graphics.drawString(font, getMessage(), x + Constants.TEXT_PADDING, y + (HEIGHT - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
+            graphics.text(font, getMessage(), x + Constants.TEXT_PADDING, y + (HEIGHT - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
             graphics.blitSprite(RenderPipelines.GUI_TEXTURED, COG, x + width - SPRITE_SIZE - PADDING, y + (height - SPRITE_SIZE) / 2, SPRITE_SIZE, SPRITE_SIZE);
 
         }
 
         @Override
-        public void onClick(MouseButtonEvent event, boolean doubled) {
+        public void onClick(@NonNull MouseButtonEvent event, boolean doubled) {
             super.onClick(event, doubled);
             Minecraft.getInstance().setScreen(new SoundScreen(soundData, this));
         }
 
         @Override
-        protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+        protected void updateWidgetNarration(@NonNull NarrationElementOutput narrationElementOutput) {
 
         }
 

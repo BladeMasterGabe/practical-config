@@ -8,12 +8,13 @@ import config.practical.manager.ConfigManager;
 import config.practical.utilities.Constants;
 import config.practical.widgets.abstracts.ConfigParent;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3x2fStack;
+import org.jspecify.annotations.NonNull;
 
 public class ConfigurableScreen extends Screen {
 
@@ -99,15 +100,15 @@ public class ConfigurableScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
-        super.render(graphics, mouseX, mouseY, deltaTicks);
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
+        super.extractRenderState(graphics, mouseX, mouseY, deltaTicks);
 
         float centerX = (Minecraft.getInstance().getWindow().getGuiScaledWidth() - (this.font.width(this.title) * TITLE_SCALAR)) / 2;
         Matrix3x2fStack stack = graphics.pose();
         stack.pushMatrix();
         stack.translate(centerX, TITLE_Y_OFFSET);
         stack.scale(TITLE_SCALAR, TITLE_SCALAR);
-        graphics.drawString(this.font, this.title, 0, 0, TITLE_COLOR, true);
+        graphics.text(this.font, this.title, 0, 0, TITLE_COLOR, true);
         stack.popMatrix();
     }
 

@@ -5,8 +5,9 @@ import config.practical.utilities.DrawHelper;
 import config.practical.widgets.abstracts.ConfigChild;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.Consumer;
 
@@ -27,7 +28,7 @@ class OptionsList <T> extends ConfigChild {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
 
         if (!parent.displayList()) return;
 
@@ -40,7 +41,7 @@ class OptionsList <T> extends ConfigChild {
 
         for (int i = 0; i < options.length; i++) {
             T option = options[i];
-            graphics.drawString(font, option.toString(),x + Constants.TEXT_PADDING, y + ELEMENT_HEIGHT * i + ((ELEMENT_HEIGHT - Constants.TEXT_HEIGHT) / 2), 0xffffffff, true);
+            graphics.text(font, option.toString(),x + Constants.TEXT_PADDING, y + ELEMENT_HEIGHT * i + ((ELEMENT_HEIGHT - Constants.TEXT_HEIGHT) / 2), 0xffffffff, true);
         }
 
     }
@@ -57,7 +58,7 @@ class OptionsList <T> extends ConfigChild {
     }
 
     @Override
-    public void onClick(MouseButtonEvent event, boolean doubled) {
+    public void onClick(@NonNull MouseButtonEvent event, boolean doubled) {
         super.onClick(event, doubled);
         int index =(int) (event.y() - getY()) / ELEMENT_HEIGHT;
         if (index < 0 || index >= options.length) return;

@@ -5,12 +5,14 @@ import config.practical.widgets.abstracts.ConfigChild;
 import config.practical.widgets.abstracts.ConfigParent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractContainerWidget;
+import net.minecraft.client.gui.components.AbstractScrollArea;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,12 +31,12 @@ public class ConfigSection extends AbstractContainerWidget {
     private final ArrayList<AbstractWidget> children;
 
     public ConfigSection(Component text) {
-        super(0, 0, DEFAULT_WIDTH, TEXT_HEIGHT + PADDING, text);
+        super(0, 0, DEFAULT_WIDTH, TEXT_HEIGHT + PADDING, text, AbstractScrollArea.defaultSettings(10));
         children = new ArrayList<>();
     }
 
     @Override
-    public List<? extends GuiEventListener> children() {
+    public @NonNull List<? extends GuiEventListener> children() {
         return children;
     }
 
@@ -59,7 +61,7 @@ public class ConfigSection extends AbstractContainerWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         int x = getX();
         int y = getY();
 
@@ -68,11 +70,11 @@ public class ConfigSection extends AbstractContainerWidget {
 
         Font font = Minecraft.getInstance().font;
         Component text = getMessage();
-        graphics.drawString(font, text, (width - font.width(text)) / 2 + x, y + PADDING, TEXT_COLOR, true);
+        graphics.text(font, text, (width - font.width(text)) / 2 + x, y + PADDING, TEXT_COLOR, true);
         graphics.disableScissor();
 
         for (AbstractWidget widget : children) {
-            widget.render(graphics, mouseX, mouseY, deltaTicks);
+            widget.extractRenderState(graphics, mouseX, mouseY, deltaTicks);
         }
     }
 
@@ -152,7 +154,7 @@ public class ConfigSection extends AbstractContainerWidget {
     }
 
     @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+    protected void updateWidgetNarration(@NonNull NarrationElementOutput narrationElementOutput) {
 
     }
 }

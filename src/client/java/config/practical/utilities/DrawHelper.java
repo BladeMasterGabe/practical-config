@@ -1,6 +1,6 @@
 package config.practical.utilities;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 
@@ -21,7 +21,7 @@ public class DrawHelper {
     private static final Identifier BOTTOM_LEFT_FILLED = Identifier.fromNamespaceAndPath(Constants.NAMESPACE, "bottom-left-filled");
     private static final Identifier BOTTOM_RIGHT_FILLED = Identifier.fromNamespaceAndPath(Constants.NAMESPACE, "bottom-right-filled");
 
-    public static void drawBackground(GuiGraphics graphics, int x, int y, int width, int height, int color) {
+    public static void drawBackground(GuiGraphicsExtractor graphics, int x, int y, int width, int height, int color) {
         if (width < CORNER_RADIUS * 2 || height < CORNER_RADIUS * 2) {
             return;
         }
@@ -51,14 +51,14 @@ public class DrawHelper {
         graphics.fill(x + width - CORNER_RADIUS, y + CORNER_RADIUS, x + width - LINE_THICKNESS, y + height - CORNER_RADIUS, color);
     }
 
-    public static void drawBackground(GuiGraphics graphics, int x, int y, int width, int height) {
+    public static void drawBackground(GuiGraphicsExtractor graphics, int x, int y, int width, int height) {
         drawBackground(graphics, x, y, width, height, Constants.BACKGROUND_COLOR);
     }
 
-    public static void drawBorder(GuiGraphics graphics, int x, int y, int width, int height, int color) {
-        graphics.hLine(x, x + width, y, color);
-        graphics.hLine(x, x + width, y + height - 1, color);
-        graphics.vLine(x, y, y + height, color);
-        graphics.vLine( x + width - 1, y, y + height, color);
+    public static void drawBorder(GuiGraphicsExtractor graphics, int x, int y, int width, int height, int color) {
+        graphics.horizontalLine(x, x + width, y, color);
+        graphics.horizontalLine(x, x + width, y + height - 1, color);
+        graphics.verticalLine(x, y, y + height, color);
+        graphics.verticalLine( x + width - 1, y, y + height, color);
     }
 }

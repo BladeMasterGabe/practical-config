@@ -4,12 +4,12 @@ import config.practical.utilities.Constants;
 import config.practical.utilities.DrawHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import org.jspecify.annotations.NonNull;
 
 public abstract class Slider extends AbstractWidget {
 
@@ -31,7 +31,7 @@ public abstract class Slider extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         int x = getX();
         int y = getY();
         int width = getWidth();
@@ -46,7 +46,7 @@ public abstract class Slider extends AbstractWidget {
 
         //background
         DrawHelper.drawBackground(graphics, x, y, width, height);
-        graphics.drawString(font, getMessage(), x + Constants.TEXT_PADDING, y + (HEIGHT - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
+        graphics.text(font, getMessage(), x + Constants.TEXT_PADDING, y + (HEIGHT - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
 
         //slider
         DrawHelper.drawBackground(graphics, sliderX, sliderY, SLIDER_WIDTH, SLIDER_HEIGHT, SLIDER_BACKGROUND_COLOR);
@@ -54,7 +54,7 @@ public abstract class Slider extends AbstractWidget {
         //thumb
         DrawHelper.drawBackground(graphics, sliderX + thumbPos, sliderY, THUMB_RADIUS * 2, THUMB_RADIUS * 2);
 
-        graphics.drawString(font, currStr, sliderX - font.width(currStr) - 2, y + (HEIGHT - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
+        graphics.text(font, currStr, sliderX - font.width(currStr) - 2, y + (HEIGHT - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
     }
 
     abstract String getCurrValue();
@@ -88,13 +88,13 @@ public abstract class Slider extends AbstractWidget {
     }
 
     @Override
-    public void onRelease(MouseButtonEvent event) {
+    public void onRelease(@NonNull MouseButtonEvent event) {
         super.onRelease(event);
         isDragging = false;
     }
 
     @Override
-    public void onClick(MouseButtonEvent event, boolean doubled) {
+    public void onClick(@NonNull MouseButtonEvent event, boolean doubled) {
         super.onClick(event, doubled);
         if (insideSlider((int) event.x(), (int) event.y())) {
             isDragging = true;
@@ -103,15 +103,10 @@ public abstract class Slider extends AbstractWidget {
     }
 
     @Override
-    protected void onDrag(MouseButtonEvent event, double offsetX, double offsetY) {
+    protected void onDrag(@NonNull MouseButtonEvent event, double offsetX, double offsetY) {
         super.onDrag(event, offsetX, offsetY);
         if (isDragging) {
             updateThumbPos(event.x());
         }
-    }
-
-    @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-
     }
 }

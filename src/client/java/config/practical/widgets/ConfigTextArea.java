@@ -3,11 +3,12 @@ package config.practical.widgets;
 import config.practical.utilities.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+import org.jspecify.annotations.NonNull;
 
 public class ConfigTextArea extends AbstractWidget {
 
@@ -21,12 +22,12 @@ public class ConfigTextArea extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
-        graphics.drawWordWrap(font, formattedText, getX(), getY(), width, 0xffffffff, true);
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
+        graphics.textWithWordWrap(font, formattedText, getX(), getY(), width, 0xffffffff, true);
     }
 
     @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+    protected void updateWidgetNarration(@NonNull NarrationElementOutput narrationElementOutput) {
 
     }
 

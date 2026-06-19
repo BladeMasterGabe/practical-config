@@ -18,7 +18,6 @@ import config.practical.widgets.sliders.ConfigFloat;
 import config.practical.widgets.sliders.ConfigInt;
 import config.practical.widgets.sound.ConfigSound;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -38,7 +37,7 @@ import java.util.List;
 class TestFile {
 
     enum Directions {
-        NORTH("North"), SOUTH ("South"), EAST("East"), WEST("West");
+        NORTH("North"), SOUTH("South"), EAST("East"), WEST("West");
 
         final String name;
 
@@ -99,7 +98,7 @@ class TestFile {
 
         int centered = (component.getWidth() - font.width(text)) / 2;
         //graphics.fill(x, y, x + component.getWidth(), y + component.getHeight(), someColor);
-        graphics.drawString(font, text, x + centered, y + (component.getHeight() - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
+        graphics.text(font, text, x + centered, y + (component.getHeight() - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
     });
 
 
@@ -110,11 +109,12 @@ class TestFile {
 
 
     public static void register() {
-        openConfig = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+
+        openConfig = new KeyMapping(
                 "opens a Config menu",
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_RIGHT_SHIFT,
-                KeyMapping.Category.MISC));
+                KeyMapping.Category.MISC);
 
         ClientTickEvents.END_CLIENT_TICK.register((client -> {
             if (openConfig.consumeClick()) {
@@ -132,20 +132,20 @@ class TestFile {
         category.add(new ConfigFloat(Component.literal("This is a float slider"), () -> someFloat, newFloat -> someFloat = newFloat, 0.1f, 0, 1));
         category.add(new ConfigDouble(Component.literal("This is a double slider"), () -> someDouble, newDouble -> someDouble = newDouble, 0.1, 0, 1));
         category.add(new ConfigString(Component.literal("This is a string"), () -> someString, newString -> someString = newString));
-        category.add(new ConfigOptions<>(Component.literal("This is an enum"),Directions.values(), () -> someEnum, newEnum -> someEnum = newEnum));
+        category.add(new ConfigOptions<>(Component.literal("This is an enum"), Directions.values(), () -> someEnum, newEnum -> someEnum = newEnum));
 
         ConfigSection section = new ConfigSection(Component.literal("This is a section"));
         section.add(new ConfigBool(Component.literal("This is a bool"), () -> someBoolean, bool -> someBoolean = bool));
         section.add(new ConfigSound(Component.literal("This is a sound"), someSound));
         section.add(new ConfigTextArea(
                 "To be, or not to be, that is the question:\n" +
-                "Whether 'tis nobler in the mind to suffer\n" +
-                "The slings and arrows of outrageous fortune,\n" +
-                "Or to take arms against a sea of troubles\n" +
-                "And by opposing end them. To die—to sleep,\n" +
-                "No more; and by a sleep to say we end\n" +
-                "The heart-ache and the thousand natural shocks\n" +
-                "That flesh is heir to: 'tis a consummation\n"));
+                        "Whether 'tis nobler in the mind to suffer\n" +
+                        "The slings and arrows of outrageous fortune,\n" +
+                        "Or to take arms against a sea of troubles\n" +
+                        "And by opposing end them. To die—to sleep,\n" +
+                        "No more; and by a sleep to say we end\n" +
+                        "The heart-ache and the thousand natural shocks\n" +
+                        "That flesh is heir to: 'tis a consummation\n"));
         category.add(section);
 
         ConfigSection colorSection = new ConfigSection(Component.literal("Color selectors"));

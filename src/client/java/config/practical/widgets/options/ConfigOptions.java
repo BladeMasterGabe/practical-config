@@ -4,9 +4,10 @@ import config.practical.utilities.Constants;
 import config.practical.utilities.DrawHelper;
 import config.practical.widgets.abstracts.ConfigParent;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -36,7 +37,7 @@ public class ConfigOptions<T> extends ConfigParent {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         int x = getX();
         int y = getY();
         int width = getWidth();
@@ -44,15 +45,15 @@ public class ConfigOptions<T> extends ConfigParent {
 
         //background and message
         DrawHelper.drawBackground(graphics, x, y, width, height);
-        graphics.drawString(Minecraft.getInstance().font, getMessage(), x + Constants.TEXT_PADDING, y + (HEIGHT - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
+        graphics.text(Minecraft.getInstance().font, getMessage(), x + Constants.TEXT_PADDING, y + (HEIGHT - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
 
         //selected item
         DrawHelper.drawBackground(graphics, x + WIDTH - OptionsList.WIDTH - MARGIN, y + MARGIN, OptionsList.WIDTH, OptionsList.ELEMENT_HEIGHT);
-        graphics.drawString(Minecraft.getInstance().font, supplier.get().toString(), x + WIDTH - OptionsList.WIDTH - MARGIN + Constants.TEXT_PADDING, y + MARGIN + (OptionsList.ELEMENT_HEIGHT - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
+        graphics.text(Minecraft.getInstance().font, supplier.get().toString(), x + WIDTH - OptionsList.WIDTH - MARGIN + Constants.TEXT_PADDING, y + MARGIN + (OptionsList.ELEMENT_HEIGHT - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
     }
 
     @Override
-    public void onClick(MouseButtonEvent event, boolean doubled) {
+    public void onClick(@NonNull MouseButtonEvent event, boolean doubled) {
         super.onClick(event, doubled);
         displayList = !displayList;
         update();

@@ -4,13 +4,14 @@ import config.practical.utilities.Constants;
 import config.practical.utilities.DrawHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -52,7 +53,7 @@ public class ConfigBool extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         int x = getX();
         int y = getY();
 
@@ -78,7 +79,7 @@ public class ConfigBool extends AbstractWidget {
 
         //background and message
         DrawHelper.drawBackground(graphics, x, y, width, height);
-        graphics.drawString(font, getMessage(), x + Constants.TEXT_PADDING, y + (HEIGHT - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
+        graphics.text(font, getMessage(), x + Constants.TEXT_PADDING, y + (HEIGHT - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
 
         //the button itself
         DrawHelper.drawBackground(graphics, x + Constants.WIDGET_WIDTH - TRACK_WIDTH - THUMB_MARGIN, y + (HEIGHT - TRACK_HEIGHT) / 2, TRACK_WIDTH, TRACK_HEIGHT, color);
@@ -86,7 +87,7 @@ public class ConfigBool extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean doubled) {
+    public boolean mouseClicked(@NonNull MouseButtonEvent event, boolean doubled) {
         boolean newValue = !supplier.get();
         consumer.accept(newValue);
         totalTicks = 0;
@@ -94,7 +95,7 @@ public class ConfigBool extends AbstractWidget {
     }
 
     @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+    protected void updateWidgetNarration(@NonNull NarrationElementOutput narrationElementOutput) {
 
     }
 

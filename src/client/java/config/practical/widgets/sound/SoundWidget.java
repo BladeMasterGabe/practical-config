@@ -3,13 +3,14 @@ package config.practical.widgets.sound;
 import config.practical.utilities.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.NonNull;
 
 class SoundWidget extends AbstractWidget {
 
@@ -31,12 +32,12 @@ class SoundWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         Minecraft client = Minecraft.getInstance();
         Font font = client.font;
         int x = getX();
         int y = getY();
-        graphics.drawString(font, getMessage(), x + Constants.TEXT_PADDING, y + (HEIGHT - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
+        graphics.text(font, getMessage(), x + Constants.TEXT_PADDING, y + (HEIGHT - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BUTTON_TEXTURE, buttonX(), buttonY(), BUTTON_SIZE, BUTTON_SIZE);
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, CHECKMARK, buttonX(), buttonY(), BUTTON_SIZE, BUTTON_SIZE);
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BUTTON_TEXTURE, soundX(), soundY(), BUTTON_SIZE, BUTTON_SIZE);
@@ -48,14 +49,14 @@ class SoundWidget extends AbstractWidget {
     }
 
     @Override
-    public void onClick(MouseButtonEvent event, boolean doubled) {
+    public void onClick(@NonNull MouseButtonEvent event, boolean doubled) {
         super.onClick(event, doubled);
         soundClick(event.x(), event.y());
         buttonClick(event.x(), event.y());
     }
 
     @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+    protected void updateWidgetNarration(@NonNull NarrationElementOutput narrationElementOutput) {
 
     }
 
