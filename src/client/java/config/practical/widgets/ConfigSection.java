@@ -106,16 +106,16 @@ public class ConfigSection extends AbstractContainerWidget {
         }
     }
 
-    public void hideChildComponents(boolean keepFocused) {
+    public void hideChildComponents(boolean keepFocused, GuiEventListener current) {
         for (AbstractWidget widget : children) {
             if (widget.isFocused() && keepFocused) continue;
 
-            if (widget instanceof ConfigParent parent) {
+            if (widget instanceof ConfigParent parent &&  widget != current) {
                 parent.hideAll();
                 parent.update();
 
             } else if (widget instanceof ConfigSection section) {
-                section.hideChildComponents(keepFocused);
+                section.hideChildComponents(keepFocused, current);
             }
         }
     }

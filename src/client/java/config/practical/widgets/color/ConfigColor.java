@@ -48,7 +48,7 @@ public class ConfigColor extends ConfigParent {
      * @param identifier   a string that's unique to link the sb-mask to
      * @param transparency true for transparency, else false
      */
-    public ConfigColor(Component  message, Supplier<Integer> supplier, Consumer<Integer> consumer, String identifier, boolean transparency) {
+    public ConfigColor(Component message, Supplier<Integer> supplier, Consumer<Integer> consumer, String identifier, boolean transparency) {
         super(0, 0, Constants.WIDGET_WIDTH, HEIGHT, message);
         this.supplier = supplier;
         this.consumer = consumer;
@@ -157,7 +157,11 @@ public class ConfigColor extends ConfigParent {
         int color = Color.HSBtoRGB(hueValue, saturation, brightness);
         hexInput.updateText(color);
         if (transparency) {
-            consumer.accept(alphaValue << 24 | color);
+            int r = (color >> 16 & 0xff);
+            int g = (color >> 8 & 0xff);
+            int b = (color & 0xff);
+
+            consumer.accept(alphaValue << 24 | r << 16 | g << 8 | b);
         } else {
             consumer.accept(0xff << 24 | color);
         }

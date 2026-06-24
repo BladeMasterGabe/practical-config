@@ -18,6 +18,7 @@ import config.practical.widgets.sliders.ConfigFloat;
 import config.practical.widgets.sliders.ConfigInt;
 import config.practical.widgets.sound.ConfigSound;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -85,7 +86,7 @@ class TestFile {
     public static HUDComponent myComponent = new HUDComponent(0, 0, 100, 50, 1, () -> true, (component, graphics) -> {
         int x = component.getScaledX();
         int y = component.getScaledY();
-        graphics.fill(x, y, x + component.getWidth(), y + component.getHeight(), noTransparencyColor);
+        graphics.fill(x, y, x + component.getWidth(), y + component.getHeight(), someColor);
     });
 
     @ConfigValue
@@ -105,16 +106,21 @@ class TestFile {
     public static final ConfigManager manager = new ConfigManager("./config/test-" + Constants.NAMESPACE + ".json",
             List.of(TestFile.class));
 
+    public static final KeyMapping.Category CATEGORY =
+            KeyMapping.Category.register(
+                    Identifier.fromNamespaceAndPath("config.practical", "test_category")
+            );
+
     private static KeyMapping openConfig;
 
 
     public static void register() {
 
-        openConfig = new KeyMapping(
+        openConfig = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "opens a Config menu",
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_RIGHT_SHIFT,
-                KeyMapping.Category.MISC);
+                CATEGORY));
 
         ClientTickEvents.END_CLIENT_TICK.register((client -> {
             if (openConfig.consumeClick()) {

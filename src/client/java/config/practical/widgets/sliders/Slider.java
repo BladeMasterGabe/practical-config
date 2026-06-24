@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -108,5 +109,10 @@ public abstract class Slider extends AbstractWidget {
         if (isDragging) {
             updateThumbPos(event.x());
         }
+    }
+
+    @Override
+    protected void updateWidgetNarration(@NonNull NarrationElementOutput output) {
+
     }
 }
