@@ -16,19 +16,20 @@ import org.jspecify.annotations.NonNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ComponentEditScreen extends Screen {
 
     private static final Identifier CROSSHAIR = Identifier.fromNamespaceAndPath(Constants.NAMESPACE, "crosshair");
 
-    private static final Component TITLE = Component.literal("");
-
     private static final double MOVE_SPEED = 2;
     private static final int CROSSHAIR_SIZE = 4;
     private static final float SCALE_FACTOR = 0.02f;
     private static final int gridColor = 0xff004444;
+    private static final int DISPLAY_DURATION = 1250;
 
     private static final String[] KEYS = {
+            "t + ctrl",
             "r",
             "r + ctrl + shift",
             "g + ctrl",
@@ -38,6 +39,7 @@ public class ComponentEditScreen extends Screen {
             "tab"
     };
     private static final String[] INFO = {
+            "toggle category",
             "reset component",
             "reset All editable components",
             "toggle grid",
@@ -50,28 +52,52 @@ public class ComponentEditScreen extends Screen {
     private static final ArrayList<HUDComponent> ALL_COMPONENTS = new ArrayList<>();
 
     private final ArrayList<HUDComponent> components;
+    private boolean isUpdating = false;
 
     private final Screen parent;
 
     private HUDComponent selected;
     private boolean isDragging = false;
 
+    private HUDCategory current = null;
+    private long swappedTime = 0;
+
 
     public ComponentEditScreen(Screen parent) {
-        super(TITLE);
+        super(Component.literal(""));
         this.parent = parent;
         this.components = new ArrayList<>();
-
-        ALL_COMPONENTS.forEach(component -> {
-            if (component.editable()) {
-                components.add(component);
-            }
-        });
+        updateComponents(null);
+        HUDCategory.reset();
     }
 
     public static void addComponent(HUDComponent component) {
         if (component == null) return;
         ALL_COMPONENTS.add(component);
+    }
+
+    private void updateComponents(HUDCategory category) {
+        isUpdating = true;
+        components.clear();
+        selected = null;
+
+        ALL_COMPONENTS.forEach(component -> {
+            if (!component.editable()) return;
+
+            if (category == null) {
+                components.add(component);
+            } else {
+                List<HUDCategory> categories = component.categories();
+                if (categories == null || categories.contains(category)) {
+                    components.add(component);
+                }
+
+            }
+        });
+
+        isUpdating = false;
+        current = category;
+        swappedTime = System.currentTimeMillis();
     }
 
     @Override
@@ -80,7 +106,7 @@ public class ComponentEditScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        if (selected != null) {
+        if (selected != null && !isUpdating) {
             float newScale = selected.getScale() + (float) Math.signum(verticalAmount) * SCALE_FACTOR;
             selected.setScale(newScale);
         }
@@ -89,6 +115,8 @@ public class ComponentEditScreen extends Screen {
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubled) {
+        if (isUpdating) return super.mouseClicked(event, doubled);
+
         int x = (int) event.x();
         int y = (int) event.y();
 
@@ -106,8 +134,7 @@ public class ComponentEditScreen extends Screen {
 
     @Override
     public boolean mouseDragged(@NonNull MouseButtonEvent event, double offsetX, double offsetY) {
-
-        if (isDragging && selected != null) {
+        if (isDragging && selected != null && !isUpdating) {
             Window window = minecraft.getWindow();
             selected.move(offsetX / window.getGuiScaledWidth(), offsetY / window.getGuiScaledHeight());
         }
@@ -122,7 +149,9 @@ public class ComponentEditScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(KeyEvent event) {
+    public boolean keyPressed(@NonNull KeyEvent event) {
+        if (isUpdating) return super.keyPressed(event);
+
         int modifiers = event.modifiers();
         int keyCode = event.key();
 
@@ -133,9 +162,7 @@ public class ComponentEditScreen extends Screen {
             for (HUDComponent component : components) {
                 component.reset();
             }
-        }
-
-        if (keyCode == GLFW.GLFW_KEY_G && ctrlIsPressed) {
+        } else if (keyCode == GLFW.GLFW_KEY_G && ctrlIsPressed) {
             Config.gridEnabled = !Config.gridEnabled;
             Config.manager.save();
         }
@@ -147,6 +174,10 @@ public class ComponentEditScreen extends Screen {
                 index = (index + 1) % components.size();
                 selected = components.get(index);
             }
+        }
+
+        if (keyCode == GLFW.GLFW_KEY_T && ctrlIsPressed) {
+            updateComponents(HUDCategory.getNext());
         }
 
         if (selected != null) {
@@ -235,13 +266,36 @@ public class ComponentEditScreen extends Screen {
             graphics.text(font, KEYS[i], 7 + longest, height - ((font.lineHeight + 1) * (KEYS.length - i)), 0xffffffff, true);
         }
 
+        if (isUpdating) return;
+
         if (selected != null) {
             selected.renderHighlight(graphics);
         }
 
         for (HUDComponent component : components) {
-            component.renderIgnoreConditions(graphics);
+            component.scaleAndRenderEditTemplate(graphics);
         }
+
+        long diff = System.currentTimeMillis() - swappedTime;
+        if (diff < DISPLAY_DURATION) {
+            String displayed = (current != null ? current.name() : "all");
+
+            double t = (double) diff / DISPLAY_DURATION;
+            int alpha = (int) (Math.cos((t * Math.PI) / 2) * 255);
+            int color = alpha << 24 | 0x00ffffff;
+
+            float scale = 1.5f;
+
+            int x = (minecraft.getWindow().getGuiScaledWidth() - font.width(displayed)) / 2;
+            int y = (minecraft.getWindow().getGuiScaledHeight() - font.lineHeight) / 2 - 20;
+
+            Matrix3x2fStack stack = graphics.pose();
+            stack.pushMatrix();
+            stack.scale(scale, scale);
+            graphics.text(font, displayed, (int) (x / scale), (int) (y / scale), color, true);
+            stack.popMatrix();
+        }
+
     }
 
     @Override

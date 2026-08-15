@@ -1,9 +1,11 @@
-package config.practical;
+package config.practical.tests;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import config.practical.ConfigurableScreen;
 import config.practical.category.ConfigCategory;
 import config.practical.data.SoundData;
-import config.practical.hud.HUDComponent;
+import config.practical.hud.HUDCategory;
+import config.practical.hud.SimpleHUDComponent;
 import config.practical.manager.ConfigManager;
 import config.practical.manager.ConfigValue;
 import config.practical.utilities.Constants;
@@ -35,7 +37,10 @@ import java.util.List;
  * prebuilt config and screen, please copy from this
  * to learn how to make a screen and save variables
  */
-class TestFile {
+public class TestFile {
+
+    public static HUDCategory P1 = new HUDCategory("p1");
+    public static HUDCategory P2 = new HUDCategory("p2");
 
     enum Directions {
         NORTH("North"), SOUTH("South"), EAST("East"), WEST("West");
@@ -51,6 +56,9 @@ class TestFile {
             return name;
         }
     }
+
+    @ConfigValue
+    public static TestComponent testComponent = new TestComponent();
 
     @ConfigValue
     public static SoundData someSound = new SoundData(SoundEvents.NOTE_BLOCK_PLING.value(), 1, 1);
@@ -83,14 +91,14 @@ class TestFile {
     public static Directions someEnum = Directions.NORTH;
 
     @ConfigValue
-    public static HUDComponent myComponent = new HUDComponent(0, 0, 100, 50, 1, () -> true, (component, graphics) -> {
+    public static SimpleHUDComponent myComponent = new SimpleHUDComponent(0, 0, 100, 50, 1, () -> true, (component, graphics) -> {
         int x = component.getScaledX();
         int y = component.getScaledY();
         graphics.fill(x, y, x + component.getWidth(), y + component.getHeight(), someColor);
     });
 
     @ConfigValue
-    public static HUDComponent myOtherComponent = new HUDComponent(0, 0, 100, 20, 1, () -> true, (component, graphics) -> {
+    public static SimpleHUDComponent myOtherComponent = new SimpleHUDComponent(0, 0, 100, 20, 1, "This is info", () -> true, (component, graphics) -> {
         int x = component.getScaledX();
         int y = component.getScaledY();
 
@@ -98,7 +106,6 @@ class TestFile {
         Font font = Minecraft.getInstance().font;
 
         int centered = (component.getWidth() - font.width(text)) / 2;
-        //graphics.fill(x, y, x + component.getWidth(), y + component.getHeight(), someColor);
         graphics.text(font, text, x + centered, y + (component.getHeight() - Constants.TEXT_HEIGHT) / 2, Constants.WHITE_COLOR, true);
     });
 

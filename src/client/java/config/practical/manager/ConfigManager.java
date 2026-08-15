@@ -3,7 +3,6 @@ package config.practical.manager;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import config.practical.hud.HUDComponent;
 import config.practical.utilities.Constants;
 
 import java.io.FileWriter;
@@ -41,7 +40,13 @@ public class ConfigManager {
                 try {
                     String name = field.getName();
                     Object value = field.get(null);
-                    obj.add(name, gson.toJsonTree(value));
+                    if (value instanceof Saveable saveable) {
+                        JsonObject object = new JsonObject();
+                        saveable.save(object);
+                        obj.add(name, object);
+                    } else {
+                        obj.add(name, gson.toJsonTree(value));
+                    }
                 } catch (IllegalAccessException ignored) {
                     Constants.LOGGER.warning("Field " + field.getName() + " is not accessible.");
                 }
@@ -88,10 +93,11 @@ public class ConfigManager {
         }
         try {
             JsonElement jsonVal = object.get(name);
-            Object val = gson.fromJson(jsonVal, field.getType());
-            if (val instanceof HUDComponent newVal && field.get(null) instanceof HUDComponent reference) {
-                reference.copyAttributes(newVal);
+            Object fieldObj = field.get(null);
+            if (fieldObj instanceof Saveable saveable && jsonVal instanceof JsonObject obj) {
+                saveable.load(obj);
             } else {
+                Object val = gson.fromJson(jsonVal, field.getType());
                 field.set(null, val);
             }
         } catch (IllegalAccessException ignored) {

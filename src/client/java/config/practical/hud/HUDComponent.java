@@ -1,7 +1,9 @@
 package config.practical.hud;
 
+import com.google.gson.JsonObject;
 import com.mojang.blaze3d.platform.Window;
 import config.practical.Practicalconfig;
+import config.practical.manager.Saveable;
 import config.practical.utilities.Constants;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
@@ -11,11 +13,12 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3x2fStack;
 import org.jspecify.annotations.NonNull;
 
-public class HUDComponent implements HudElement {
+import java.util.List;
+
+public abstract class HUDComponent implements Saveable, HudElement {
 
     private static int componentCount = 0;
 
@@ -26,73 +29,99 @@ public class HUDComponent implements HudElement {
     private static final int HIGHLIGHT_MARGIN = 2;
 
     private static final Identifier AFTER_IDENTIFIER = Identifier.parse("boss_bar");
-
     private static final Minecraft client = Minecraft.getInstance();
-
-    private transient final double defaultX, defaultY;
-    private transient final float defaultScale;
-
-    private transient int width, height;
 
     private double x, y;
     private float scale;
-    private final String info;
-    private transient final ConditionSupplier conditionSupplier;
-    private transient final RenderSupplier renderSupplier;
-    private transient final EditSupplier editSupplier;
 
-    /**
-     * x, y goes from 0 to 1 and get scaled
-     * up using the Window with getScaledWidth
-     * and get getScaledHeight
-     *
-     * @param x                 0 to 1
-     * @param y                 0 to 1
-     * @param width             int
-     * @param height            int
-     * @param scale             a scale that's between MIN_SCALE and MAX_SCALE
-     * @param info              text info that will display when its selected
-     * @param conditionSupplier the condition to render
-     * @param renderSupplier    the function that is used to render it
-     */
-    public HUDComponent(double x, double y, int width, int height, float scale, String info, @NotNull ConditionSupplier conditionSupplier, @NotNull RenderSupplier renderSupplier, @NotNull EditSupplier editSupplier) {
+    private final String info;
+
+    public HUDComponent(double x, double y, float scale, String info) {
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
-        this.scale = Mth.clamp(scale, MIN_SCALE, MAX_SCALE);
+        setScale(scale);
         this.info = info;
 
-        defaultX = x;
-        defaultY = y;
-        defaultScale = Mth.clamp(scale, MIN_SCALE, MAX_SCALE);
-
-        this.conditionSupplier = conditionSupplier;
-        this.renderSupplier = renderSupplier;
-        this.editSupplier = editSupplier;
-
-        //HudElementRegistry.addLast(Identifier.of(Practicalconfig.MOD_ID, "component-" + componentCount), this);
         HudElementRegistry.attachElementAfter(AFTER_IDENTIFIER, Identifier.fromNamespaceAndPath(Practicalconfig.MOD_ID, "component-" + componentCount), this);
         componentCount++;
         ComponentEditScreen.addComponent(this);
+
+        init();
     }
 
-    //backwards compatibility
-    @SuppressWarnings("unused")
-    public HUDComponent(double x, double y, int width, int height, float scale, String info, @NotNull ConditionSupplier conditionSupplier, @NotNull RenderSupplier renderSupplier) {
-        this(x, y, width, height, scale, info, conditionSupplier, renderSupplier, () -> true);
+    public HUDComponent(String info) {
+        this(0, 0, 1, info);
     }
 
-    //backwards compatibility
-    @SuppressWarnings("unused")
-    public HUDComponent(double x, double y, int width, int height, float scale, @NotNull ConditionSupplier conditionSupplier, @NotNull RenderSupplier renderSupplier) {
-        this(x, y, width, height, scale, "", conditionSupplier, renderSupplier, () -> true);
+    public void init() {}
+
+    public abstract int getHeight();
+
+    public abstract int getWidth();
+
+    public abstract boolean editable();
+
+    public abstract boolean shouldRender();
+
+    /**
+     * a list of categories for it to display the components
+     * @return List of HUDCategory or null if it should ignore categories
+     */
+    public abstract List<HUDCategory> categories();
+
+    public abstract void render(@NonNull GuiGraphicsExtractor graphics);
+
+    public final void scaleAndRender(@NonNull GuiGraphicsExtractor graphics) {
+        Matrix3x2fStack stack = graphics.pose();
+        stack.pushMatrix();
+        stack.scale(scale, scale);
+        render(graphics);
+        stack.popMatrix();
+    }
+
+    /**
+     * Used by the ComponentEditScreen to render the component
+     * Override it if you want to do a specific template for when its edited
+     * @param graphics the graphics interface
+     */
+    public void renderEditTemplate(@NonNull GuiGraphicsExtractor graphics) {
+        render(graphics);
+    }
+
+    public final void scaleAndRenderEditTemplate(@NonNull GuiGraphicsExtractor graphics) {
+        Matrix3x2fStack stack = graphics.pose();
+        stack.pushMatrix();
+        stack.scale(scale, scale);
+        renderEditTemplate(graphics);
+        stack.popMatrix();
+    }
+
+    public void renderHighlight(GuiGraphicsExtractor graphics) {
+
+        int x = getScaledX();
+        int y = getScaledY();
+        int width = getWidth();
+        int height = getHeight();
+
+        Matrix3x2fStack stack = graphics.pose();
+        stack.pushMatrix();
+        stack.scale(scale, scale);
+        Font textRenderer = Minecraft.getInstance().font;
+        graphics.fill(x - HIGHLIGHT_MARGIN, y - HIGHLIGHT_MARGIN, x + width + HIGHLIGHT_MARGIN, y + height + HIGHLIGHT_MARGIN, HIGHLIGHT_COLOR);
+        graphics.text(textRenderer, info, x + (width - textRenderer.width(info)) / 2, y - textRenderer.lineHeight - 2, 0xffffffff, true);
+        stack.popMatrix();
+    }
+
+    @Override
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, @NonNull DeltaTracker deltaTracker) {
+        if (!editable() || !shouldRender()) return;
+        scaleAndRender(graphics);
     }
 
     public void reset() {
-        x = defaultX;
-        y = defaultY;
-        scale = defaultScale;
+        x = 0;
+        y = 0;
+        scale = 1;
     }
 
     public void move(double dx, double dy) {
@@ -102,12 +131,6 @@ public class HUDComponent implements HudElement {
 
     public void setScale(float scale) {
         this.scale = Mth.clamp(scale, MIN_SCALE, MAX_SCALE);
-    }
-
-    public void copyAttributes(HUDComponent component) {
-        this.x = component.x;
-        this.y = component.y;
-        this.scale = component.scale;
     }
 
     public float getScale() {
@@ -124,40 +147,14 @@ public class HUDComponent implements HudElement {
         return (int) (y * screenHeight / scale);
     }
 
-    @SuppressWarnings("unused")
-    public int getWidth() {
-        return width;
-    }
-
-    @SuppressWarnings("unused")
-    public int getHeight() {
-        return height;
-    }
-
-    @SuppressWarnings("unused")
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    @SuppressWarnings("unused")
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    @SuppressWarnings("unused")
-    public void setDimension(int width, int height) {
-        this.width = width;
-        this.height = height;
-    }
-
     public void centerHorizontally(Window window) {
         int windowWidth = window.getGuiScaledWidth();
-        x = (windowWidth - width * scale) / (windowWidth * 2.0);
+        x = (windowWidth - getWidth() * scale) / (windowWidth * 2.0);
     }
 
     public void centerVertically(Window window) {
         int windowHeight = window.getGuiScaledHeight();
-        y = (windowHeight - height * scale) / (windowHeight * 2.0);
+        y = (windowHeight - getHeight() * scale) / (windowHeight * 2.0);
     }
 
     public double calcXSnap(double scaledX, Window window) {
@@ -205,80 +202,25 @@ public class HUDComponent implements HudElement {
 
     }
 
-    public boolean editable() {
-        return editSupplier.shouldBeEditable();
-    }
-
     public boolean inBounds(int mouseX, int mouseY) {
         double screenX = x * client.getWindow().getGuiScaledWidth();
         double screenY = y * client.getWindow().getGuiScaledHeight();
 
-        return screenX <= mouseX && mouseX <= screenX + (width * scale)
-                && screenY <= mouseY && mouseY <= screenY + (height * scale);
-    }
-
-    public void renderIgnoreConditions(GuiGraphicsExtractor graphics) {
-        Matrix3x2fStack stack = graphics.pose();
-        stack.pushMatrix();
-        stack.scale(scale, scale);
-        renderSupplier.render(this, graphics);
-        stack.popMatrix();
-    }
-
-    public void renderHighlight(GuiGraphicsExtractor graphics) {
-        Matrix3x2fStack stack = graphics.pose();
-        stack.pushMatrix();
-        stack.scale(scale, scale);
-        int x = getScaledX();
-        int y = getScaledY();
-        Font textRenderer = Minecraft.getInstance().font;
-        graphics.fill(x - HIGHLIGHT_MARGIN, y - HIGHLIGHT_MARGIN, x + width + HIGHLIGHT_MARGIN, y + height + HIGHLIGHT_MARGIN, HIGHLIGHT_COLOR);
-        graphics.text(textRenderer, info, x + (width - textRenderer.width(info)) / 2, y - textRenderer.lineHeight - 2, 0xffffffff, true);
-        stack.popMatrix();
+        return screenX <= mouseX && mouseX <= screenX + (getWidth() * scale)
+                && screenY <= mouseY && mouseY <= screenY + (getHeight() * scale);
     }
 
     @Override
-    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, @NonNull DeltaTracker deltaTracker) {
-        if (!editSupplier.shouldBeEditable() || !conditionSupplier.shouldRender()) return;
-        Matrix3x2fStack stack = graphics.pose();
-        stack.pushMatrix();
-        stack.scale(scale, scale);
-        renderSupplier.render(this, graphics);
-        stack.popMatrix();
+    public void save(JsonObject object) {
+        object.addProperty("x", x);
+        object.addProperty("y", y);
+        object.addProperty("scale", scale);
     }
 
-    public interface ConditionSupplier {
-        /**
-         * Will be called when the function render is called
-         * Make use of it so the component only renders
-         * when you want it to render
-         *
-         * @return true if it should render, else false
-         */
-        boolean shouldRender();
-    }
-
-    public interface RenderSupplier {
-        /**
-         * Will be called in function render
-         * if ConditionSupplier returns true
-         * NOTE: component is the component itself
-         * and scaledX and scaledY should be used
-         * for the x and y position
-         *
-         * @param component the component itself
-         * @param graphics   GuiGraphics
-         */
-        void render(HUDComponent component, GuiGraphicsExtractor graphics);
-    }
-
-    public interface EditSupplier {
-        /**
-         * Used to determine if the component
-         * should render while the user is in the
-         * ComponentEditScreen
-         *
-         */
-        boolean shouldBeEditable();
+    @Override
+    public void load(JsonObject object) {
+        x = object.get("x").getAsDouble();
+        y = object.get("y").getAsDouble();
+        scale = object.get("scale").getAsFloat();
     }
 }

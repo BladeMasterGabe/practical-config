@@ -52,7 +52,6 @@ public class ConfigScroll extends AbstractContainerWidget {
     @Override
     public void setFocused(@Nullable GuiEventListener focused) {
         super.setFocused(focused);
-        System.out.println(focused);
         hideChildComponents(true);
     }
 
