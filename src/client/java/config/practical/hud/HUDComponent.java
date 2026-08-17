@@ -36,6 +36,10 @@ public abstract class HUDComponent implements Saveable, HudElement {
 
     private final String info;
 
+    public HUDComponent(String info) {
+        this(0, 0, 1, info);
+    }
+
     public HUDComponent(double x, double y, float scale, String info) {
         this.x = x;
         this.y = y;
@@ -49,15 +53,11 @@ public abstract class HUDComponent implements Saveable, HudElement {
         init();
     }
 
-    public HUDComponent(String info) {
-        this(0, 0, 1, info);
-    }
-
     public void init() {}
 
-    public abstract int getHeight();
-
     public abstract int getWidth();
+
+    public abstract int getHeight();
 
     public abstract boolean editable();
 
