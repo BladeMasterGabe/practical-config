@@ -52,7 +52,7 @@ class ConfigHudEdit extends AbstractWidget {
     @Override
     public void onClick(@NonNull MouseButtonEvent event, boolean doubled) {
         super.onClick(event, doubled);
-        Minecraft.getInstance().setScreen(new ComponentEditScreen(screen));
+        Minecraft.getInstance().setScreenAndShow(new ComponentEditScreen(screen));
     }
 
     @Override

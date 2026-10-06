@@ -51,7 +51,7 @@ public class ConfigSound extends ConfigSection {
         @Override
         public void onClick(@NonNull MouseButtonEvent event, boolean doubled) {
             super.onClick(event, doubled);
-            Minecraft.getInstance().setScreen(new SoundScreen(soundData, this));
+            Minecraft.getInstance().setScreenAndShow(new SoundScreen(soundData, this));
         }
 
         @Override

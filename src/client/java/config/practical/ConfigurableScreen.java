@@ -115,6 +115,6 @@ public class ConfigurableScreen extends Screen {
     @Override
     public void onClose() {
         manager.save();
-        this.minecraft.setScreen(this.parent);
+        this.minecraft.setScreenAndShow(this.parent);
     }
 }

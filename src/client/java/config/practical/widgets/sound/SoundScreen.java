@@ -43,7 +43,7 @@ class SoundScreen extends Screen {
         super(Component.empty());
         loadWidgets();
         Minecraft client = Minecraft.getInstance();
-        parent = client.screen;
+        parent = client.gui.screen();
         Window window = client.getWindow();
 
         this.soundData = soundData;
@@ -125,7 +125,7 @@ class SoundScreen extends Screen {
 
     @Override
     public void onClose() {
-        this.minecraft.setScreen(this.parent);
+        this.minecraft.setScreenAndShow(this.parent);
         stopSound();
 
     }

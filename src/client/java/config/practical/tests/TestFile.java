@@ -131,7 +131,7 @@ public class TestFile {
 
         ClientTickEvents.END_CLIENT_TICK.register((client -> {
             if (openConfig.consumeClick()) {
-                client.setScreen(createScreen(null));
+                client.setScreenAndShow(createScreen(null));
             }
         }));
 
