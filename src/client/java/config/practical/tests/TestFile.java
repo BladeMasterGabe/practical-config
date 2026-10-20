@@ -28,7 +28,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 
@@ -125,8 +124,8 @@ public class TestFile {
 
         openConfig = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "opens a Config menu",
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_RIGHT_SHIFT,
+                InputConstants.Type.KEYBOARD,
+                InputConstants.KEY_RSHIFT,
                 CATEGORY));
 
         ClientTickEvents.END_CLIENT_TICK.register((client -> {

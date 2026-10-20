@@ -1,5 +1,6 @@
 package config.practical.hud;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import config.practical.Config;
 import config.practical.utilities.Constants;
@@ -13,7 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.joml.Matrix3x2fStack;
 import org.jspecify.annotations.NonNull;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -155,19 +155,19 @@ public class ComponentEditScreen extends Screen {
         int modifiers = event.modifiers();
         int keyCode = event.key();
 
-        boolean ctrlIsPressed = (modifiers & GLFW.GLFW_MOD_CONTROL) != 0;
-        boolean shiftIsPressed = (modifiers & GLFW.GLFW_MOD_SHIFT) != 0;
+        boolean ctrlIsPressed = (modifiers & InputConstants.MOD_CONTROL) != 0;
+        boolean shiftIsPressed = (modifiers & InputConstants.MOD_SHIFT) != 0;
 
-        if (keyCode == GLFW.GLFW_KEY_R && ctrlIsPressed && shiftIsPressed) {
+        if (keyCode == InputConstants.KEY_R && ctrlIsPressed && shiftIsPressed) {
             for (HUDComponent component : components) {
                 component.reset();
             }
-        } else if (keyCode == GLFW.GLFW_KEY_G && ctrlIsPressed) {
+        } else if (keyCode == InputConstants.KEY_G && ctrlIsPressed) {
             Config.gridEnabled = !Config.gridEnabled;
             Config.manager.save();
         }
 
-        if (keyCode == GLFW.GLFW_KEY_TAB) {
+        if (keyCode == InputConstants.KEY_TAB) {
             if (selected == null) selected = components.getFirst();
             else {
                 int index = components.indexOf(selected);
@@ -176,40 +176,40 @@ public class ComponentEditScreen extends Screen {
             }
         }
 
-        if (keyCode == GLFW.GLFW_KEY_T && ctrlIsPressed) {
+        if (keyCode == InputConstants.KEY_T && ctrlIsPressed) {
             updateComponents(HUDCategory.getNext());
         }
 
         if (selected != null) {
-            if (keyCode == GLFW.GLFW_KEY_R) {
+            if (keyCode == InputConstants.KEY_R) {
                 selected.reset();
             }
 
-            if (keyCode == GLFW.GLFW_KEY_H && ctrlIsPressed) {
+            if (keyCode == InputConstants.KEY_H && ctrlIsPressed) {
                 selected.centerHorizontally(minecraft.getWindow());
             }
 
-            if (keyCode == GLFW.GLFW_KEY_V && ctrlIsPressed) {
+            if (keyCode == InputConstants.KEY_V && ctrlIsPressed) {
                 selected.centerVertically(minecraft.getWindow());
             }
 
-            if (keyCode == GLFW.GLFW_KEY_LEFT) {
+            if (keyCode == InputConstants.KEY_LEFT) {
                 selected.move(-MOVE_SPEED / minecraft.getWindow().getGuiScaledWidth(), 0);
             }
 
-            if (keyCode == GLFW.GLFW_KEY_RIGHT) {
+            if (keyCode == InputConstants.KEY_RIGHT) {
                 selected.move(MOVE_SPEED / minecraft.getWindow().getGuiScaledWidth(), 0);
             }
 
-            if (keyCode == GLFW.GLFW_KEY_UP) {
+            if (keyCode == InputConstants.KEY_UP) {
                 selected.move(0, -MOVE_SPEED / minecraft.getWindow().getGuiScaledHeight());
             }
 
-            if (keyCode == GLFW.GLFW_KEY_DOWN) {
+            if (keyCode == InputConstants.KEY_DOWN) {
                 selected.move(0, MOVE_SPEED / minecraft.getWindow().getGuiScaledHeight());
             }
 
-            if (keyCode == GLFW.GLFW_KEY_S) {
+            if (keyCode == InputConstants.KEY_S) {
                 selected.snapToGrid(minecraft.getWindow());
 
             }

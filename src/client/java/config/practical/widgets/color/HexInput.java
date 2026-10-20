@@ -1,5 +1,6 @@
 package config.practical.widgets.color;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import config.practical.utilities.Constants;
 import config.practical.utilities.DrawHelper;
 import config.practical.widgets.abstracts.ConfigChild;
@@ -8,7 +9,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import org.jspecify.annotations.NonNull;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.Set;
 
@@ -28,7 +28,7 @@ class HexInput extends ConfigChild {
 
     @Override
     public boolean keyPressed(KeyEvent event) {
-        if (event.key() == GLFW.GLFW_KEY_BACKSPACE && !text.isEmpty()) {
+        if (event.key() == InputConstants.KEY_BACKSPACE && !text.isEmpty()) {
             text = text.substring(0, text.length() - 1);
         }
 

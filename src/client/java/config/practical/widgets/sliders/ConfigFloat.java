@@ -1,9 +1,9 @@
 package config.practical.widgets.sliders;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import config.practical.utilities.Constants;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -51,11 +51,11 @@ public class ConfigFloat extends Slider {
     @Override
     public boolean keyPressed(KeyEvent input) {
         int keyCode = input.key();
-        if (keyCode == GLFW.GLFW_KEY_LEFT) {
+        if (keyCode == InputConstants.KEY_LEFT) {
             consumer.accept(Math.max(supplier.get() - step, min));
             updateThumbPosWithDelta((supplier.get() - min) / (max - min));
             return true;
-        } else if (keyCode == GLFW.GLFW_KEY_RIGHT) {
+        } else if (keyCode == InputConstants.KEY_RIGHT) {
             consumer.accept(Math.min(supplier.get() + step, max));
             updateThumbPosWithDelta((supplier.get() - min) / (max - min));
             return true;
