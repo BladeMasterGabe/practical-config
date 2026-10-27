@@ -34,6 +34,7 @@ public class ConfigOptions<T> extends ConfigParent {
         list = new OptionsList<>(this, options, consumer);
         addChild(list);
         this.supplier = supplier;
+        if (supplier.get() == null) consumer.accept(options[0]);
     }
 
     @Override
